@@ -1,0 +1,60 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{82F1AD48-1EAC-4EAE-8619-B6E12D2FEDEC}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="RS232.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="..\Ethernet\Ethernet.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="..\Test\SDIAPP.dproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="RS232">
+			<MSBuild Projects="RS232.dproj"/>
+		</Target>
+		<Target Name="RS232:Clean">
+			<MSBuild Targets="Clean" Projects="RS232.dproj"/>
+		</Target>
+		<Target Name="RS232:Make">
+			<MSBuild Targets="Make" Projects="RS232.dproj"/>
+		</Target>
+		<Target Name="Ethernet">
+			<MSBuild Projects="..\Ethernet\Ethernet.dproj"/>
+		</Target>
+		<Target Name="Ethernet:Clean">
+			<MSBuild Targets="Clean" Projects="..\Ethernet\Ethernet.dproj"/>
+		</Target>
+		<Target Name="Ethernet:Make">
+			<MSBuild Targets="Make" Projects="..\Ethernet\Ethernet.dproj"/>
+		</Target>
+		<Target Name="SDIAPP">
+			<MSBuild Projects="..\Test\SDIAPP.dproj"/>
+		</Target>
+		<Target Name="SDIAPP:Clean">
+			<MSBuild Targets="Clean" Projects="..\Test\SDIAPP.dproj"/>
+		</Target>
+		<Target Name="SDIAPP:Make">
+			<MSBuild Targets="Make" Projects="..\Test\SDIAPP.dproj"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="RS232;Ethernet;SDIAPP"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="RS232:Clean;Ethernet:Clean;SDIAPP:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="RS232:Make;Ethernet:Make;SDIAPP:Make"/>
+		</Target>
+		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+	</Project>
