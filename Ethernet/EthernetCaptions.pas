@@ -28,12 +28,16 @@ type
     DESC_SETTINGS_OF_NEW_PROF,      //'Установки для сохранения',
     DESC_OK_BUTTON,                 //'Ok'
     DESC_CANCEL_BUTTON,             //'Отмена'
+    DESC_ERROR_WIN_CAP,             //'Ошибка...'
+    DESC_ERR_PROF_NAME_EPTY,        //'Введите название профиля.'
+
 
     DESC_N
   );
 
 const
   Descriptions: array [0..Integer(TDescriptionID.DESC_N) - 1] of String = (
+
     'TCP/IP',
     'IP адрес',
     'Порт',
@@ -50,7 +54,10 @@ const
     'Профиль',
     'Установки для сохранения',
     'Ok',
-    'Отмена'
+    'Отмена',
+    'Ошибка...',
+    'Введите название профиля.'
+
   );
 
 implementation

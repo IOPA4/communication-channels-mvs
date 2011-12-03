@@ -30,37 +30,42 @@ type
     gbSettingsNewProfile: TGroupBox;
     edIP: TEdit;
     procedure FormShow(Sender: TObject);
+    procedure btOkClick(Sender: TObject);
+    procedure btCancelClick(Sender: TObject);
   private
     { Private declarations }
   public
     OkButtonPressed:Boolean;
     { Public declarations }
   end;
-//--------------------------------------------------------
+//------------------------------
+//------------------------------
   TAddProfileWrapper = class
   private
     m_NewProfile:TfNewProfile;
   public
 
-    //constructor createAddProfile(ChannelSettings:TChannelSettings);
     constructor create(Owner:TForm);
     constructor createAddProfile(ChannelSettings:TChannelSettings; Owner:TForm);
-    function ShowSettingsWindow():Boolean;
+    function ShowSettingsWindow(var profileName:string):Boolean;
 
   end;
+//------------------------------
+//------------------------------
 var
   AddProfileWrapper:TAddProfileWrapper;
 
 implementation
-
 {$R *.dfm}
+//------------------------------------------------------------------------------
+//                    TAddProfileWrapper
+//------------------------------------------------------------------------------
     constructor TAddProfileWrapper.createAddProfile(ChannelSettings:TChannelSettings; Owner:TForm);
     var
       pc:PChar;
       Res:Integer;
     begin
        try
-
 
           if m_NewProfile <> nil then
              m_NewProfile.Destroy;
@@ -119,7 +124,7 @@ implementation
           m_NewProfile := Nil;
       end;
     end;
-
+//------------------------------------------------------------------------------
   constructor TAddProfileWrapper.create(Owner:TForm);
     var
       pc:PChar;
@@ -131,17 +136,46 @@ implementation
     m_NewProfile := TfNewProfile.Create(Owner);
 
     end;
-
-    function TAddProfileWrapper.ShowSettingsWindow():Boolean;
+//------------------------------------------------------------------------------
+    function TAddProfileWrapper.ShowSettingsWindow(var profileName:string):Boolean;
     begin
        if m_NewProfile <> Nil then
           m_NewProfile.ShowModal();
 
        Result := m_NewProfile.OkButtonPressed;
+       if Result then
+          profileName := m_NewProfile.edProfileName.Text;
+
+       m_NewProfile.Destroy;
     end;
 
+//------------------------------------------------------------------------------
+//              TfNewProfile
+//------------------------------------------------------------------------------
+procedure TfNewProfile.btCancelClick(Sender: TObject);
+begin
+    OkButtonPressed := False;
+    Close;
+end;
 
+//------------------------------------------------------------------------------
+procedure TfNewProfile.btOkClick(Sender: TObject);
+var
+  pcCap, pcText:PChar;
+begin
+  if StrLen(PWideChar(edProfileName.Text)) > 0 then
+  begin
+     OkButtonPressed := True;
+     Close;
+  end else
+  begin
+      GetDescription(Integer(TDescriptionID.DESC_ERROR_WIN_CAP), pcCap);
+      GetDescription(Integer(TDescriptionID.DESC_ERR_PROF_NAME_EPTY), pcText);
+      Application.MessageBox(PWideChar(pcText), PWideChar(pcCap), mb_iconerror or MB_OK);
+  end;
+end;
 
+//------------------------------------------------------------------------------
 procedure TfNewProfile.FormShow(Sender: TObject);
 begin
     OkButtonPressed := False;
