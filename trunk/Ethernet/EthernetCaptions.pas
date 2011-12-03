@@ -33,7 +33,6 @@ type
     DESC_CONFIRM_MODIFY_PROF,       //'Подтвердите изменение профиля'
     DESC_CONFIRM_DELETE_PROF,       //'Подтвердите удаление профиля'
 
-
     DESC_N
   );
 

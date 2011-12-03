@@ -24,7 +24,6 @@ uses
 {$R *.res}
 var
   SettingsManager:TChanSettingsManager;
-  ss:TForm2;
   Temp:Integer;
 
 
@@ -104,13 +103,11 @@ end;
 //
 function Channel_GetProfilesCount(var Count:Integer):Integer;
 begin
+
   Result := SettingsManager.GetProfilesCount(Count);
 end;
 
 function Channel_GetProfilesName(N:Integer; var ProfileName:PChar):Integer;
-var
-  i,Count:Integer;
-  Profiles,Profiles1:TStrings;
 begin
 
   Result:= SettingsManager.GetProfilesName(N, ProfileName);
@@ -159,7 +156,7 @@ begin
     	begin
 
          SettingsManager := TChanSettingsManager.create();
-
+         SettingsManager.RefreshProfilsArray();
 //        pLangList:=NIL;
 //        ZeroMemory(@BlockR,BlockRPointer);
 //        BlockRPointer:=0;
