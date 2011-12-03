@@ -42,6 +42,7 @@ type
     edIP: TEdit;
     procedure tbCancelClick(Sender: TObject);
     procedure btCreateProfClick(Sender: TObject);
+    procedure btChangeProfClick(Sender: TObject);
   private
 
     { Private declarations }
@@ -238,10 +239,20 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+procedure TForm2.btChangeProfClick(Sender: TObject);
+var
+  ChannelSettings:TChannelSettings;
+  OkPressed:Boolean;
+begin
+
+end;
+
+//------------------------------------------------------------------------------
 procedure TForm2.btCreateProfClick(Sender: TObject);
 var
   ChannelSettings:TChannelSettings;
   OkPressed:Boolean;
+  ProfileName:string;
 begin
    ChannelSettings.IP := edIP.Text;
    ChannelSettings.Port := StrToInt(edPort.Text);
@@ -249,10 +260,12 @@ begin
    ChannelSettings.TimeOuts := StrToInt(edPortDeleyWaitAnswer.Text);
    ChannelSettings.Retry := StrToInt(edPortRetry.Text);
 
-   //AddProfileWrapper.createAddProfile(ChannelSettings);
-
    AddProfileWrapper := TAddProfileWrapper.createAddProfile(ChannelSettings, Self);
-   OkPressed := AddProfileWrapper.ShowWindow();
+   OkPressed := AddProfileWrapper.ShowSettingsWindow(ProfileName);
+   AddProfileWrapper.Destroy;
+
+   //TO DO Write profile on disk
+
 end;
 
 procedure TForm2.tbCancelClick(Sender: TObject);
