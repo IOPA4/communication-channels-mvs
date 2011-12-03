@@ -115,13 +115,14 @@ object Form2: TForm2
       OnClick = btCreateProfClick
     end
     object btDelProf: TButton
-      Left = 288
-      Top = 67
+      Left = 289
+      Top = 66
       Width = 107
       Height = 33
       Anchors = [akRight, akBottom]
       Caption = #1059#1076#1072#1083#1080#1090#1100
       TabOrder = 2
+      OnClick = btDelProfClick
     end
     object btChangeProf: TButton
       Left = 176

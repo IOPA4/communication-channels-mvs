@@ -49,7 +49,7 @@
 			<DCCReference Include="EthernetSettings.pas">
 				<Form>Form2</Form>
 			</DCCReference>
-			<DCCReference Include="EthernetErrors.pas"/>
+			<DCCReference Include="EthernetConstants.pas"/>
 			<DCCReference Include="EthernetCaptions.pas"/>
 			<DCCReference Include="AddProfileSettings.pas">
 				<Form>fNewProfile</Form>
@@ -76,7 +76,7 @@
 						<Parameters Name="UseLauncher">False</Parameters>
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
-						<Parameters Name="HostApplication">C:\Progect\comm_channels\Test\SDIAPP.exe</Parameters>
+						<Parameters Name="HostApplication">C:\Progect\comm_channels\communication-channels-mvs\Test\SDIAPP.exe</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
