@@ -17,7 +17,7 @@ uses
   Forms,
   Ethernet_exchange in 'Ethernet_exchange.pas',
   EthernetSettings in 'EthernetSettings.pas' {Form2},
-  EthernetErrors in 'EthernetErrors.pas',
+  EthernetConstants in 'EthernetConstants.pas',
   EthernetCaptions in 'EthernetCaptions.pas',
   AddProfileSettings in 'AddProfileSettings.pas' {fNewProfile};
 

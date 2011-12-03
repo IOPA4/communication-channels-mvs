@@ -5,6 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, Mask,
+  EthernetConstants,
   EthernetSettings,
   EthernetCaptions,
   EthernetErrors;
@@ -46,8 +47,10 @@ type
   public
 
     constructor create(Owner:TForm);
-    constructor createAddProfile(ChannelSettings:TChannelSettings; Owner:TForm);
-    function ShowSettingsWindow(var profileName:string):Boolean;
+    constructor createAddProfile(WindowType: TAddProfWindow;
+      ChannelSettings:TChannelSettings; Owner:TForm);
+    function ShowSettingsWindow(var profileName:string):Boolean; Overload;
+    function ShowSettingsWindow():Boolean; Overload;
 
   end;
 //------------------------------
@@ -60,7 +63,8 @@ implementation
 //------------------------------------------------------------------------------
 //                    TAddProfileWrapper
 //------------------------------------------------------------------------------
-    constructor TAddProfileWrapper.createAddProfile(ChannelSettings:TChannelSettings; Owner:TForm);
+constructor TAddProfileWrapper.createAddProfile(WindowType: TAddProfWindow;
+      ChannelSettings:TChannelSettings; Owner:TForm);
     var
       pc:PChar;
       Res:Integer;
@@ -72,8 +76,25 @@ implementation
 
           m_NewProfile := TfNewProfile.Create(Application);
 
-          if GetDescription(Integer(TDescriptionID.DESC_NEW_PROFILE), pc) = RET_OK then
-            m_NewProfile.Caption := string(pc);
+          if WindowType = TAddProfWindow.CREATE_PROFILE then
+          begin
+             if GetDescription(Integer(TDescriptionID.DESC_NEW_PROFILE), pc) = RET_OK then
+              m_NewProfile.Caption := string(pc);
+          end else if WindowType = TAddProfWindow.CHANGE_PROFILE then
+          begin
+              if GetDescription(Integer(TDescriptionID.DESC_CONFIRM_MODIFY_PROF), pc) = RET_OK then
+                m_NewProfile.Caption := string(pc);
+          end else if WindowType = TAddProfWindow.DELETE_PROFILE then
+          begin
+              if GetDescription(Integer(TDescriptionID.DESC_CONFIRM_DELETE_PROF), pc) = RET_OK then
+                m_NewProfile.Caption := string(pc);
+          end;
+
+          if GetDescription(Integer(TDescriptionID.DESC_PROFILE), pc) = RET_OK then
+            m_NewProfile.gbProfile.Caption := string(pc);
+
+          if GetDescription(Integer(TDescriptionID.DESC_PROFILE_NAME), pc) = RET_OK then
+            m_NewProfile.lbProfileName.Caption := string(pc);
 
           if GetDescription(Integer(TDescriptionID.DESC_SETTINGS_OF_NEW_PROF), pc) = RET_OK then
             m_NewProfile.gbSettingsNewProfile.Caption := string(pc);
@@ -99,11 +120,32 @@ implementation
           if GetDescription(Integer(TDescriptionID.DESC_RETRY_COUNT), pc) = RET_OK then
             m_NewProfile.lbRetry.Caption := string(pc);
 
-          if GetDescription(Integer(TDescriptionID.DESC_OK_BUTTON), pc) = RET_OK then
-            m_NewProfile.btOk.Caption := string(pc);
-
           if GetDescription(Integer(TDescriptionID.DESC_CANCEL_BUTTON), pc) = RET_OK then
             m_NewProfile.btCancel.Caption := string(pc);
+
+          if WindowType = TAddProfWindow.CREATE_PROFILE then
+          begin
+              if GetDescription(Integer(TDescriptionID.DESC_CREATE_PROFILE),
+                pc) = RET_OK then
+                 m_NewProfile.btOk.Caption := string(pc);
+          end else if WindowType = TAddProfWindow.CHANGE_PROFILE then
+          begin
+              if GetDescription(Integer(TDescriptionID.DESC_CHANGE_PROFILE),
+                pc) = RET_OK then
+                  m_NewProfile.btOk.Caption := string(pc);
+          end else if WindowType = TAddProfWindow.DELETE_PROFILE then
+          begin
+             if GetDescription(Integer(TDescriptionID.DESC_DELETE_PROFILE),
+                pc) = RET_OK then
+                  m_NewProfile.btOk.Caption := string(pc);
+          end;
+
+
+          if WindowType <> TAddProfWindow.CREATE_PROFILE then
+          begin
+            m_NewProfile.edProfileName.Enabled := False;
+            m_NewProfile.edProfileName.Text := ChannelSettings.ProfilName;
+          end;
 
           m_NewProfile.edIP.Enabled := False;
           m_NewProfile.edIP.Text := ChannelSettings.IP;
@@ -148,7 +190,16 @@ implementation
 
        m_NewProfile.Destroy;
     end;
+//------------------------------------------------------------------------------
+    function TAddProfileWrapper.ShowSettingsWindow():Boolean;
+    begin
+       if m_NewProfile <> Nil then
+          m_NewProfile.ShowModal();
 
+       Result := m_NewProfile.OkButtonPressed;
+
+       m_NewProfile.Destroy;
+    end;
 //------------------------------------------------------------------------------
 //              TfNewProfile
 //------------------------------------------------------------------------------
