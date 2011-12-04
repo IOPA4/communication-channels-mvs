@@ -512,7 +512,7 @@ function TChanSettingsManager.ModifySettingsFile(
      ChannelSettings.Retry := StrToInt(edPortRetry.Text);
   end;
 
-  //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
   procedure TForm2.btChangeProfClick(Sender: TObject);
   var
     ChannelSettings:TChannelSettings;
@@ -531,7 +531,7 @@ function TChanSettingsManager.ModifySettingsFile(
       OwnerModifySettingsSet(ChannelSettings, TModifyProfType.CHANGE_PROFILE);
   end;
 
-  //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
   procedure TForm2.btCreateProfClick(Sender: TObject);
   var
     ChannelSettings:TChannelSettings;
@@ -552,7 +552,7 @@ function TChanSettingsManager.ModifySettingsFile(
        OwnerModifySettingsSet(ChannelSettings, TModifyProfType.CREATE_PROFILE);
   end;
 
-  //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
   procedure TForm2.btDelProfClick(Sender: TObject);
   var
     ChannelSettings:TChannelSettings;
@@ -570,13 +570,13 @@ function TChanSettingsManager.ModifySettingsFile(
        OwnerModifySettingsSet(ChannelSettings, TModifyProfType.DELETE_PROFILE);
   end;
 
-  //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
   procedure TForm2.cbProfilesSelect(Sender: TObject);
   begin
      OwnerRefresfWindow(cbProfiles.ItemIndex);
   end;
 
-  //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
   procedure TForm2.tbCancelClick(Sender: TObject);
   begin
      Self.Close();
