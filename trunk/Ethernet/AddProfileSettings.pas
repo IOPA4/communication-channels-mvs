@@ -47,7 +47,7 @@ type
   public
 
     constructor create(Owner:TForm);
-    constructor createAddProfile(WindowType: TAddProfWindow;
+    constructor createAddProfile(WindowType: TModifyProfType;
       ChannelSettings:TChannelSettings; Owner:TForm);
     function ShowSettingsWindow(var profileName:string):Boolean; Overload;
     function ShowSettingsWindow():Boolean; Overload;
@@ -63,7 +63,7 @@ implementation
 //------------------------------------------------------------------------------
 //                    TAddProfileWrapper
 //------------------------------------------------------------------------------
-constructor TAddProfileWrapper.createAddProfile(WindowType: TAddProfWindow;
+constructor TAddProfileWrapper.createAddProfile(WindowType: TModifyProfType;
       ChannelSettings:TChannelSettings; Owner:TForm);
     var
       pc:PChar;
@@ -76,15 +76,15 @@ constructor TAddProfileWrapper.createAddProfile(WindowType: TAddProfWindow;
 
           m_NewProfile := TfNewProfile.Create(Application);
 
-          if WindowType = TAddProfWindow.CREATE_PROFILE then
+          if WindowType = TModifyProfType.CREATE_PROFILE then
           begin
              if GetDescription(Integer(TDescriptionID.DESC_NEW_PROFILE), pc) = RET_OK then
               m_NewProfile.Caption := string(pc);
-          end else if WindowType = TAddProfWindow.CHANGE_PROFILE then
+          end else if WindowType = TModifyProfType.CHANGE_PROFILE then
           begin
               if GetDescription(Integer(TDescriptionID.DESC_CONFIRM_MODIFY_PROF), pc) = RET_OK then
                 m_NewProfile.Caption := string(pc);
-          end else if WindowType = TAddProfWindow.DELETE_PROFILE then
+          end else if WindowType = TModifyProfType.DELETE_PROFILE then
           begin
               if GetDescription(Integer(TDescriptionID.DESC_CONFIRM_DELETE_PROF), pc) = RET_OK then
                 m_NewProfile.Caption := string(pc);
@@ -123,17 +123,17 @@ constructor TAddProfileWrapper.createAddProfile(WindowType: TAddProfWindow;
           if GetDescription(Integer(TDescriptionID.DESC_CANCEL_BUTTON), pc) = RET_OK then
             m_NewProfile.btCancel.Caption := string(pc);
 
-          if WindowType = TAddProfWindow.CREATE_PROFILE then
+          if WindowType = TModifyProfType.CREATE_PROFILE then
           begin
               if GetDescription(Integer(TDescriptionID.DESC_CREATE_PROFILE),
                 pc) = RET_OK then
                  m_NewProfile.btOk.Caption := string(pc);
-          end else if WindowType = TAddProfWindow.CHANGE_PROFILE then
+          end else if WindowType = TModifyProfType.CHANGE_PROFILE then
           begin
               if GetDescription(Integer(TDescriptionID.DESC_CHANGE_PROFILE),
                 pc) = RET_OK then
                   m_NewProfile.btOk.Caption := string(pc);
-          end else if WindowType = TAddProfWindow.DELETE_PROFILE then
+          end else if WindowType = TModifyProfType.DELETE_PROFILE then
           begin
              if GetDescription(Integer(TDescriptionID.DESC_DELETE_PROFILE),
                 pc) = RET_OK then
@@ -141,7 +141,7 @@ constructor TAddProfileWrapper.createAddProfile(WindowType: TAddProfWindow;
           end;
 
 
-          if WindowType <> TAddProfWindow.CREATE_PROFILE then
+          if WindowType <> TModifyProfType.CREATE_PROFILE then
           begin
             m_NewProfile.edProfileName.Enabled := False;
             m_NewProfile.edProfileName.Text := ChannelSettings.ProfilName;
