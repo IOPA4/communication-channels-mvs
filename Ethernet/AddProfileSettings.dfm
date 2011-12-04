@@ -11,6 +11,7 @@ object fNewProfile: TfNewProfile
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poOwnerFormCenter
   OnShow = FormShow
   DesignSize = (
     426
@@ -145,7 +146,6 @@ object fNewProfile: TfNewProfile
       Margins.Bottom = 4
       Anchors = [akTop, akRight]
       TabOrder = 0
-      ExplicitLeft = 215
     end
     object edPortDeleyWaitAnswer: TEdit
       Left = 225
@@ -158,7 +158,6 @@ object fNewProfile: TfNewProfile
       Margins.Bottom = 4
       Anchors = [akTop, akRight]
       TabOrder = 1
-      ExplicitLeft = 215
     end
     object edPortDelayBeforeSend: TEdit
       Left = 225
@@ -171,7 +170,6 @@ object fNewProfile: TfNewProfile
       Margins.Bottom = 4
       Anchors = [akTop, akRight]
       TabOrder = 2
-      ExplicitLeft = 215
     end
   end
   object gbProfile: TGroupBox
@@ -211,7 +209,6 @@ object fNewProfile: TfNewProfile
       Margins.Bottom = 4
       Anchors = [akTop, akRight]
       TabOrder = 0
-      ExplicitLeft = 180
     end
   end
   object btOk: TButton
@@ -223,8 +220,6 @@ object fNewProfile: TfNewProfile
     Caption = 'Ok'
     TabOrder = 3
     OnClick = btOkClick
-    ExplicitLeft = 273
-    ExplicitTop = 303
   end
   object btCancel: TButton
     Left = 206
@@ -235,7 +230,5 @@ object fNewProfile: TfNewProfile
     Caption = 'Cancel'
     TabOrder = 4
     OnClick = btCancelClick
-    ExplicitLeft = 163
-    ExplicitTop = 303
   end
 end

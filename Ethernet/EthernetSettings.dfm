@@ -11,7 +11,7 @@ object Form2: TForm2
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  Position = poDesigned
+  Position = poOwnerFormCenter
   DesignSize = (
     407
     288)
@@ -29,7 +29,7 @@ object Form2: TForm2
       Left = 5
       Top = 14
       Width = 60
-      Height = 22
+      Height = 20
       Caption = 'IP '#1040#1076#1088#1077#1089
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -102,6 +102,7 @@ object Form2: TForm2
       Top = 11
       Width = 184
       Height = 24
+      Style = csDropDownList
       TabOrder = 0
       OnSelect = cbProfilesSelect
     end
@@ -114,7 +115,6 @@ object Form2: TForm2
       Caption = #1057#1086#1079#1076#1072#1090#1100
       TabOrder = 1
       OnClick = btCreateProfClick
-      ExplicitTop = 75
     end
     object btDelProf: TButton
       Left = 295
@@ -125,7 +125,6 @@ object Form2: TForm2
       Caption = #1059#1076#1072#1083#1080#1090#1100
       TabOrder = 2
       OnClick = btDelProfClick
-      ExplicitTop = 74
     end
     object btChangeProf: TButton
       Left = 183
@@ -136,7 +135,6 @@ object Form2: TForm2
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100
       TabOrder = 3
       OnClick = btChangeProfClick
-      ExplicitTop = 74
     end
   end
   object gbExchangeSettings: TGroupBox
@@ -154,7 +152,7 @@ object Form2: TForm2
       Left = 5
       Top = 16
       Width = 130
-      Height = 18
+      Height = 16
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4
@@ -165,7 +163,7 @@ object Form2: TForm2
       Left = 5
       Top = 43
       Width = 37
-      Height = 15
+      Height = 16
       Margins.Left = 4
       Margins.Top = 4
       Margins.Right = 4

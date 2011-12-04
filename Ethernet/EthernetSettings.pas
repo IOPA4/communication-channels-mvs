@@ -10,7 +10,7 @@ uses
   EthernetCaptions;
 
 type
-  TfnRefresfWindow = procedure(Index:Integer)  of object;
+
 
   TChannelSettings = record
     ProfilName:string;
@@ -23,6 +23,9 @@ type
 
   end;
 
+  TfnRefresfWindow = procedure(Index:Integer) of object;
+  TOwnerModifySettingsSet = function(ChannelSettings:TChannelSettings;
+                            ModifyProfType:TModifyProfType):Integer of object;
   TForm2 = class(TForm)
     gbMainSettings: TGroupBox;
     btOk: TButton;
@@ -49,14 +52,11 @@ type
     procedure btDelProfClick(Sender: TObject);
     procedure cbProfilesSelect(Sender: TObject);
   private
-
-    { Private declarations }
   public
 
-  OwnerRefresfWindow: TfnRefresfWindow;
-
-  procedure FillSettingsOfWindow(var ChannelSettings:TChannelSettings);
-    { Public declarations }
+    OwnerRefresfWindow: TfnRefresfWindow;
+    OwnerModifySettingsSet: TOwnerModifySettingsSet;
+    procedure FillSettingsOfWindow(var ChannelSettings:TChannelSettings);
   end;
 
 //------------------------------------------------------------------------------
@@ -70,6 +70,7 @@ type
 
      procedure SetSettings(Settings:TChannelSettings);
      procedure RefreshWindow(Index:Integer);
+     procedure RefreshWindowEx(Index:Integer);
      procedure SetProfileListLength(Length:Integer);
 
      function InternalGetProfilesCount(var Count:Integer):Integer;
@@ -85,13 +86,15 @@ type
 
       procedure ShowWindow();
 
-      function ProfileWrite(ProfileName:String):Boolean;
       function GetProfilesCount(var Count:Integer):Integer;
       function GetProfilesName(N:Integer; var ProfileName:PChar):Integer;
       function RefreshProfilsArray():Integer;
-
-//      function GetProfileByIndex(var ChannelSettings:TChannelSettings;
-//        Index:Integer):Integer;
+      function OpenSettingsFile():Boolean;
+      function ModifySettingsSet(ChannelSettings:TChannelSettings;
+        ModifyProfType:TModifyProfType):Integer;
+      function ModifySettingsFile(ChannelSettings:TChannelSettings;
+        ModifyProfType:TModifyProfType):Integer;
+      procedure CloseSettingsFile();
   end;
 
 
@@ -100,7 +103,9 @@ implementation
 {$R *.dfm}
 uses
   AddProfileSettings;
-
+//------------------------------------------------------------------------------
+//                    TChanSettingsManager
+//------------------------------------------------------------------------------
 constructor TChanSettingsManager.create();
 var
   pc:PChar;
@@ -111,6 +116,7 @@ begin
         m_fSettings := TForm2.Create(Application);
 
         m_fSettings.OwnerRefresfWindow := RefreshWindow;
+        m_fSettings.OwnerModifySettingsSet := ModifySettingsSet;
 
         if GetDescription(Integer(TDescriptionID.DESC_TCPIP), pc) = RET_OK then
           m_fSettings.gbMainSettings.Caption := string(pc);
@@ -147,14 +153,6 @@ begin
           RET_OK then
           m_fSettings.btDelProf.Caption := string(pc);
 
-        if FileExists(ExtractFilePath(Application.ExeName)+'Settings.ini') =
-          True then
-        begin
-          m_IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
-            'Settings.ini');
-        end else
-          m_IniFile := Nil;
-
         m_LibSettings.IP := DEFVAL_IP_ADDRESS;
         m_LibSettings.Port := DEFVAL_TCP_PORT;
         m_LibSettings.Delay := DEFVAL_DELAY_BEFORE;
@@ -178,6 +176,7 @@ begin
     end;
 end;
 
+//------------------------------------------------------------------------------
 procedure TChanSettingsManager.RefreshWindow(Index:Integer);
 begin
     Assert(Index < m_ProfilsListSize, 'Индекс больше размера m_Profils');
@@ -190,7 +189,22 @@ begin
     m_fSettings.edPortRetry.Text            := IntToStr(m_Profils[Index].Retry);
 
 end;
+//
+//------------------------------------------------------------------------------
+procedure TChanSettingsManager.RefreshWindowEx(Index:Integer);
+var
+i:Integer;
+begin
+    RefreshWindow(Index);
 
+    m_fSettings.cbProfiles.Clear;
+    for i := 0 to m_ProfilsListSize - 1 do
+      m_fSettings.cbProfiles.Items.Add(m_Profils[i].ProfilName);
+    m_fSettings.cbProfiles.ItemIndex := Index;
+
+end;
+
+//------------------------------------------------------------------------------
 procedure TChanSettingsManager.SetProfileListLength(Length:Integer);
 begin
    m_ProfilsListSize := Length;
@@ -201,12 +215,39 @@ end;
 function TChanSettingsManager.GetProfilesCount(var Count:Integer):Integer;
 
 begin
-
-  Count := m_ProfilsListSize;
-  Result := RET_OK;
-
+   Count := m_ProfilsListSize;
+   Result := RET_OK;
 end;
 
+//------------------------------------------------------------------------------
+function TChanSettingsManager.OpenSettingsFile():Boolean;
+begin
+    //Assert(m_IniFile = Nil);
+
+    if FileExists(ExtractFilePath(Application.ExeName)+'Settings.ini') =
+      True then
+    begin
+      m_IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
+        'Settings.ini');
+      Result := True;
+    end else
+    begin
+      Result := False;
+      m_IniFile := Nil;
+    end;
+end;
+
+//------------------------------------------------------------------------------
+procedure TChanSettingsManager.CloseSettingsFile();
+begin
+      if (m_IniFile <> Nil) then
+      begin
+        m_IniFile.Free;
+        m_IniFile := Nil;
+      end;
+end;
+
+//------------------------------------------------------------------------------
 function TChanSettingsManager.InternalGetProfilesCount(var
   Count:Integer):Integer;
 var
@@ -216,20 +257,32 @@ begin
   Result:= RET_OK;
   Count:=0;
 
-  if m_IniFile = Nil then
-  begin
-     Result:= RET_ERR;
-  end else
-  begin
+  try
 
-    Profiles:=TStringList.Create;
-    m_IniFile.ReadSections(Profiles);
-    for i := 0 to Profiles.Count-1 do
-        if Pos(PROFNAME_PREFIX + NameDll + '_',Profiles[i])=1 then
-           Count:=Count+1;
+    if OpenSettingsFile() then
+    begin
+
+      if m_IniFile = Nil then
+      begin
+         Result:= RET_ERR;
+      end else
+      begin
+
+        Profiles:=TStringList.Create;
+        m_IniFile.ReadSections(Profiles);
+        for i := 0 to Profiles.Count-1 do
+            if Pos(PROFNAME_PREFIX + NameDll + '_',Profiles[i])=1 then
+               Count:=Count+1;
+      end;
+
+    end;
+    finally
+       CloseSettingsFile();
   end;
+
 end;
 
+//------------------------------------------------------------------------------
 function TChanSettingsManager.GetProfilesName(N:Integer; var
   ProfileName:PChar):Integer;
 var
@@ -256,67 +309,82 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function GetProfileByIndex(var ChannelSettings:TChannelSettings;
-  Index:Integer):Integer;
-  var
-    i :Integer;
-    Profiles, Names:TStrings;
-  begin
-
-  end;
-//------------------------------------------------------------------------------
 function TChanSettingsManager.RefreshProfilsArray():Integer;
   var
     Res, i, Index:Integer;
     Lines:TStrings;
     Name, s:string;
 
-   begin
-    if m_IniFile = Nil then
-    begin
-       Result:= RET_ERR;
-    end else
-    begin
+  begin
+     try
 
-      Res := InternalGetProfilesCount(m_ProfilsListSize);
-      Lines := TStringList.Create;
+     Res := InternalGetProfilesCount(m_ProfilsListSize);
 
-      m_IniFile.ReadSections(Lines);
-
-      if (Res = RET_OK) and (m_ProfilsListSize > 0)  then
+     if OpenSettingsFile() then
       begin
 
-        Index := 0;
-        SetProfileListLength(m_ProfilsListSize);
-        ZeroMemory(m_Profils, SizeOf(m_Profils[0])*m_ProfilsListSize);
+      if m_IniFile = Nil then
+      begin
+         Result:= RET_ERR;
+      end else
+      begin
 
-        for i := 0 to Lines.Count - 1 do
-        begin
 
-          if Pos(PROFNAME_PREFIX + NameDll + '_',Lines[i]) = 1 then
+        Lines := TStringList.Create;
+
+        m_IniFile.ReadSections(Lines);
+
+        if (Res = RET_OK) and (m_ProfilsListSize > 0)  then
           begin
 
-             Name := Copy(Lines[i], 18, Length(Lines[i]));
-             if StrLen(PChar(Name)) > 0 then
-             begin
+            Index := 0;
+            SetProfileListLength(m_ProfilsListSize);
+            ZeroMemory(m_Profils, SizeOf(m_Profils[0])*m_ProfilsListSize);
 
-               m_Profils[Index].ProfilName := Name;
-               m_Profils[Index].IP := m_IniFile.ReadString(Lines[i],
-                 KEYNAME_IP_ADDRESS, DEFVAL_IP_ADDRESS);
-               m_Profils[Index].Port := m_IniFile.ReadInteger(Lines[i],
-                 KEYNAME_TCP_PORT, DEFVAL_TCP_PORT);
-               m_Profils[Index].Delay := m_IniFile.ReadInteger(Lines[i],
-                 KEYNAME_DELAY_BEFORE, DEFVAL_DELAY_BEFORE);
-               m_Profils[Index].TimeOuts := m_IniFile.ReadInteger(Lines[i],
-                 KEYNAME_WAIT_ANSWER, DEFVAL_WAIT_ANSWER);
-               m_Profils[Index].Retry := m_IniFile.ReadInteger(Lines[i],
-                   KEYNAME_RETRY_COUNT, DEFVAL_RETRY_COUNT) ;
-               Index := Index + 1;
-             end;
+            for i := 0 to Lines.Count - 1 do
+              begin
+
+              if Pos(PROFNAME_PREFIX + NameDll + '_',Lines[i]) = 1 then
+                begin
+
+                 Name := Copy(Lines[i], 18, Length(Lines[i]));
+                 if StrLen(PChar(Name)) > 0 then
+                  begin
+
+                   m_Profils[Index].ProfilName := Name;
+                   m_Profils[Index].IP := m_IniFile.ReadString(Lines[i],
+                     KEYNAME_IP_ADDRESS, DEFVAL_IP_ADDRESS);
+                   m_Profils[Index].Port := m_IniFile.ReadInteger(Lines[i],
+                     KEYNAME_TCP_PORT, DEFVAL_TCP_PORT);
+                   m_Profils[Index].Delay := m_IniFile.ReadInteger(Lines[i],
+                     KEYNAME_DELAY_BEFORE, DEFVAL_DELAY_BEFORE);
+                   m_Profils[Index].TimeOuts := m_IniFile.ReadInteger(Lines[i],
+                     KEYNAME_WAIT_ANSWER, DEFVAL_WAIT_ANSWER);
+                   m_Profils[Index].Retry := m_IniFile.ReadInteger(Lines[i],
+                       KEYNAME_RETRY_COUNT, DEFVAL_RETRY_COUNT) ;
+                   Index := Index + 1;
+                  end;
+              end;
+            end;
           end;
         end;
       end;
-    end;
+
+      if m_ProfilsListSize = 0 then
+      begin
+        SetProfileListLength(1);
+
+        m_Profils[0].ProfilName := '000000';
+        m_Profils[0].IP := DEFVAL_IP_ADDRESS;
+        m_Profils[0].Port := DEFVAL_TCP_PORT;
+        m_Profils[0].Delay := DEFVAL_DELAY_BEFORE;
+	      m_Profils[0].TimeOuts := DEFVAL_WAIT_ANSWER;
+	      m_Profils[0].Retry := DEFVAL_RETRY_COUNT;
+
+      end;
+     finally
+       CloseSettingsFile;
+     end;
   end;
 
 //------------------------------------------------------------------------------
@@ -352,110 +420,166 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-procedure TForm2.FillSettingsOfWindow(var ChannelSettings:TChannelSettings);
-begin
-   ChannelSettings.ProfilName := cbProfiles.Items[cbProfiles.ItemIndex];
-   ChannelSettings.IP := edIP.Text;
-   ChannelSettings.Port := StrToInt(edPort.Text);
-   ChannelSettings.Delay := StrToInt(edPortDelayBeforeSend.Text);
-   ChannelSettings.TimeOuts := StrToInt(edPortDeleyWaitAnswer.Text);
-   ChannelSettings.Retry := StrToInt(edPortRetry.Text);
-end;
-
-//------------------------------------------------------------------------------
-procedure TForm2.btChangeProfClick(Sender: TObject);
-var
-  ChannelSettings:TChannelSettings;
-  OkPressed:Boolean;
-begin
-
-   FillSettingsOfWindow(ChannelSettings);
-
-   AddProfileWrapper := TAddProfileWrapper.createAddProfile(
-      TAddProfWindow.CHANGE_PROFILE, ChannelSettings, Self);
-
-   OkPressed := AddProfileWrapper.ShowSettingsWindow();
-   AddProfileWrapper.Destroy;
-
-end;
-
-//------------------------------------------------------------------------------
-procedure TForm2.btCreateProfClick(Sender: TObject);
-var
-  ChannelSettings:TChannelSettings;
-  OkPressed:Boolean;
-  ProfileName:string;
-begin
-   FillSettingsOfWindow(ChannelSettings);
-   ChannelSettings.ProfilName := EMPTY_PROFILE_NAME;
-
-   AddProfileWrapper := TAddProfileWrapper.createAddProfile(
-     TAddProfWindow.CREATE_PROFILE, ChannelSettings, Self);
-
-   OkPressed := AddProfileWrapper.ShowSettingsWindow(ProfileName);
-   AddProfileWrapper.Destroy;
-
-   //TO DO Append profile on Settings.ini
-
-end;
-
-procedure TForm2.btDelProfClick(Sender: TObject);
-var
-  ChannelSettings:TChannelSettings;
-  OkPressed:Boolean;
-begin
-
-   FillSettingsOfWindow(ChannelSettings);
-
-   AddProfileWrapper := TAddProfileWrapper.createAddProfile(
-      TAddProfWindow.DELETE_PROFILE, ChannelSettings, Self);
-
-   OkPressed := AddProfileWrapper.ShowSettingsWindow();
-   AddProfileWrapper.Destroy;
-
-end;
-
-procedure TForm2.cbProfilesSelect(Sender: TObject);
-begin
-   OwnerRefresfWindow(cbProfiles.ItemIndex);
-end;
-
-procedure TForm2.tbCancelClick(Sender: TObject);
-begin
-   Close();
-end;
-
-//------------------------------------------------------------------------------
-function TChanSettingsManager.ProfileWrite(ProfileName:String):Boolean;
-var
+function TChanSettingsManager.ModifySettingsSet(
+  ChannelSettings:TChannelSettings; ModifyProfType:TModifyProfType):Integer;
+  var
   i:Integer;
-  Profile:String;
-begin
-Result:=False;
-{for I := 1 to 10 do}
-//  if not m_IniFile.SectionExists('Profile_RS232_'+ProfileName) then
-//    begin
-//      Profile:='Profile_'+NameDll+'_'+ProfileName;
-//      m_IniFile.WriteString(Profile,'ProfileName',ProfileName);
-//      m_IniFile.WriteString(Profile,'PortName',FormProperties.cbPort.Text);
-//            Result:=True;
-//    end else begin
-//      Profile:='Profile_'+NameDll+'_'+ProfileName;
-{      if IniFile.ReadString(Profile,'ProfileName','')<>ProfileName then
-Continue;}
-//      IniFile.WriteString(Profile,'ProfileName',ProfileName);
-//      IniFile.WriteString(Profile,'PortName',FormProperties.cbPort.Text);
-//      IniFile.WriteString(Profile,'PortSpeed',FormProperties.cbBaudRate.Text);
-//      IniFile.WriteString(Profile,'PortDataBits',FormProperties.cbByteSize.Text);
-//      IniFile.WriteInteger(Profile,'PortParity',FormProperties.cbParity.ItemIndex);
-//      IniFile.WriteInteger(Profile,'PortStopBits',FormProperties.cbStopBits.ItemIndex);
-//      IniFile.WriteInteger(Profile,'PortFlow',FormProperties.cbFlow.ItemIndex);
-//      IniFile.WriteString(Profile,'PortDelayBeforeSend',FormProperties.edPortDelayBeforeSend.Text);
-//      IniFile.WriteString(Profile,'PortDeleyWaitAnswer',FormProperties.edPortDeleyWaitAnswer.Text);
-//      IniFile.WriteString(Profile,'PortRetry',FormProperties.edPortRetry.Text);
-//      IniFile.WriteBool(Profile,'PortEhoDelete',FormProperties.CheckBox1.Checked);
-//      Result:=True;
-//    end;
-end;
+  bRefreshed:Boolean;
+  begin
+
+    ModifySettingsFile(ChannelSettings, ModifyProfType);
+    RefreshProfilsArray();
+    bRefreshed := False;
+
+    if m_ProfilsListSize > 0 then
+    begin
+      for i := 0 to m_ProfilsListSize - 1 do
+      begin
+        if CompareStr(ChannelSettings.ProfilName, m_Profils[i].ProfilName) = 0
+        then
+        begin
+          RefreshWindowEx(i);
+          bRefreshed := True;
+          Break;
+        end;
+
+      end;
+
+    end;
+
+    if bRefreshed <> True then
+      RefreshWindowEx(0);
+  end;
+
 //------------------------------------------------------------------------------
+function TChanSettingsManager.ModifySettingsFile(
+  ChannelSettings:TChannelSettings; ModifyProfType:TModifyProfType):Integer;
+  var
+  ExternalProfileName:string;
+  begin
+    try
+
+      if  OpenSettingsFile() then
+      begin
+         Result := RET_OK;
+         ExternalProfileName := PROFNAME_PREFIX + NameDll + '_' +
+                 ChannelSettings.ProfilName;
+
+         case ModifyProfType of
+           TModifyProfType.CREATE_PROFILE,
+           TModifyProfType.CHANGE_PROFILE:
+            begin
+
+              m_IniFile.WriteString(ExternalProfileName, KEYNAME_PROFILE_NAME,
+                ChannelSettings.ProfilName);
+              m_IniFile.WriteString(ExternalProfileName, KEYNAME_IP_ADDRESS,
+                ChannelSettings.IP);
+              m_IniFile.WriteInteger(ExternalProfileName, KEYNAME_TCP_PORT,
+                ChannelSettings.Port);
+              m_IniFile.WriteInteger(ExternalProfileName, KEYNAME_DELAY_BEFORE,
+                ChannelSettings.Delay);
+              m_IniFile.WriteInteger(ExternalProfileName, KEYNAME_WAIT_ANSWER,
+                ChannelSettings.TimeOuts);
+              m_IniFile.WriteInteger(ExternalProfileName, KEYNAME_RETRY_COUNT,
+                ChannelSettings.Retry);
+            end;
+
+           DELETE_PROFILE:
+            begin
+               if m_IniFile.SectionExists(ExternalProfileName) then
+                  m_IniFile.EraseSection(ExternalProfileName);
+
+            end;
+         end;
+
+      end else
+        Result := RET_ERR;
+    finally
+      CloseSettingsFile();
+    end;
+
+  end;
+//------------------------------------------------------------------------------
+//                  TForm2;
+//------------------------------------------------------------------------------
+  procedure TForm2.FillSettingsOfWindow(var ChannelSettings:TChannelSettings);
+  begin
+     ChannelSettings.ProfilName := cbProfiles.Items[cbProfiles.ItemIndex];
+     ChannelSettings.IP := edIP.Text;
+     ChannelSettings.Port := StrToInt(edPort.Text);
+     ChannelSettings.Delay := StrToInt(edPortDelayBeforeSend.Text);
+     ChannelSettings.TimeOuts := StrToInt(edPortDeleyWaitAnswer.Text);
+     ChannelSettings.Retry := StrToInt(edPortRetry.Text);
+  end;
+
+  //------------------------------------------------------------------------------
+  procedure TForm2.btChangeProfClick(Sender: TObject);
+  var
+    ChannelSettings:TChannelSettings;
+    OkPressed:Boolean;
+  begin
+
+     FillSettingsOfWindow(ChannelSettings);
+
+     AddProfileWrapper := TAddProfileWrapper.createAddProfile(
+        TModifyProfType.CHANGE_PROFILE, ChannelSettings, Self);
+
+     OkPressed := AddProfileWrapper.ShowSettingsWindow();
+     AddProfileWrapper.Destroy;
+
+     if OkPressed then
+      OwnerModifySettingsSet(ChannelSettings, TModifyProfType.CHANGE_PROFILE);
+  end;
+
+  //------------------------------------------------------------------------------
+  procedure TForm2.btCreateProfClick(Sender: TObject);
+  var
+    ChannelSettings:TChannelSettings;
+    OkPressed:Boolean;
+    ProfileName:string;
+  begin
+     FillSettingsOfWindow(ChannelSettings);
+     ChannelSettings.ProfilName := EMPTY_PROFILE_NAME;
+
+     AddProfileWrapper := TAddProfileWrapper.createAddProfile(
+       TModifyProfType.CREATE_PROFILE, ChannelSettings, Self);
+
+     OkPressed := AddProfileWrapper.ShowSettingsWindow(
+       ChannelSettings.ProfilName);
+
+     AddProfileWrapper.Destroy;
+     if OkPressed then
+       OwnerModifySettingsSet(ChannelSettings, TModifyProfType.CREATE_PROFILE);
+  end;
+
+  //------------------------------------------------------------------------------
+  procedure TForm2.btDelProfClick(Sender: TObject);
+  var
+    ChannelSettings:TChannelSettings;
+    OkPressed:Boolean;
+  begin
+
+     FillSettingsOfWindow(ChannelSettings);
+
+     AddProfileWrapper := TAddProfileWrapper.createAddProfile(
+        TModifyProfType.DELETE_PROFILE, ChannelSettings, Self);
+
+     OkPressed := AddProfileWrapper.ShowSettingsWindow();
+     AddProfileWrapper.Destroy;
+     if OkPressed then
+       OwnerModifySettingsSet(ChannelSettings, TModifyProfType.DELETE_PROFILE);
+  end;
+
+  //------------------------------------------------------------------------------
+  procedure TForm2.cbProfilesSelect(Sender: TObject);
+  begin
+     OwnerRefresfWindow(cbProfiles.ItemIndex);
+  end;
+
+  //------------------------------------------------------------------------------
+  procedure TForm2.tbCancelClick(Sender: TObject);
+  begin
+     Self.Close();
+  end;
+
 end.

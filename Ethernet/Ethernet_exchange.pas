@@ -82,7 +82,6 @@ constructor TClientSocketWorker.Create(IPAdress:string; Port:Integer);
 begin
   try
 
-    //m_Client_Socket.Create(Nil);
     if (Port >= TCP_PORT_MIN_VALUE) Or (Port < TCP_PORT_MAX_VALUE) then
     begin
 
