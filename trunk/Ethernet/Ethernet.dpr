@@ -51,6 +51,7 @@ end;
 
 function Channel_GetSettings(var ChannelSettings: TChannelSettings):Integer;
 begin
+
   Result:=RET_OK;
   ChannelSettings := SettingsManager.FLibSettings;
 
@@ -62,42 +63,48 @@ begin
 end;
 
 function Channel_Open(ProfileName:PChar):Integer;
-//var
-//  i,n:Integer;
-//  TmpStr:String;
-//  Flag:Boolean;
-begin
-  //Result:= SettingsManager.GetProfilesName(N, ProfileName);
-//TO DO инициализация сокета, попытка соединения с срвером.
 
+begin
+  try
+    Result := SocketWorker.Open();
+  except
+    Result := RET_ERR;
+  end;
 end;
 
 function Channel_Close():Integer;
 begin
-  Result:=RET_OK;
-//  if FormProperties.SerialPort.Open then FormProperties.SerialPort.Open:=False;
+
+  try
+    Result := SocketWorker.Close();
+  except
+    Result := RET_ERR;
+  end;
+
+
 end;
 
 function Channel_Write(pBlock:Pointer;Count:Word):Integer;
 begin
-  Result:=RET_ERR;
-//  if FormProperties.SerialPort.Open=False then Exit;
-//  Result:=RET_OK;
-//  CopyMemory(@BlockW,pBlock,Count);
-//  FormProperties.SerialPort.FlushOutBuffer;
-//  FormProperties.SerialPort.FlushInBuffer;
-//  ZeroMemory(@BlockR,8192);
-//  BlockRPointer:=0;
-//  FormProperties.SerialPort.PutBlock(BlockW,Count);
+
+  try
+    Result := SocketWorker.WriteBlock(pBlock, Count);
+  except
+    Result := RET_ERR;
+  end;
+
 end;
 
 function Channel_Read(pBlock:Pointer; var Count:Word):Integer;
 begin
-  Result:=RET_OK;
-//  CopyMemory(pBlock,@BlockR,BlockRPointer);
-//  ZeroMemory(@BlockR,BlockRPointer);
-//  Count:=BlockRPointer;
-//  BlockRPointer:=0;
+  try
+
+    Result := SocketWorker.ReadBlock(pBlock, Count, 1024);
+
+  except
+    Result := RET_ERR;
+  end;
+
 end;
 
 //
@@ -153,22 +160,20 @@ procedure DLLEntryPoint(Reason: DWORD);
 begin
 	case Reason of
 		DLL_PROCESS_ATTACH:
-    	begin
-
+   	begin
          SettingsManager := TChanSettingsManager.create();
          SettingsManager.RefreshProfilsArray();
-//        pLangList:=NIL;
-//        ZeroMemory(@BlockR,BlockRPointer);
-//        BlockRPointer:=0;
-     	end;
+         SocketWorker := TClientSocketWorker.Create();
+   	end;
 		DLL_PROCESS_DETACH:
-    	begin
+   	begin
+    if SettingsManager <> Nil then
       SettingsManager.Destroy;
-//        FormProperties.SerialPort.Open:=False;
-//        IniFile.Free;
-//        FormProperties.Free;
-      end;
-	end;
+
+    if SocketWorker <> Nil then
+      SocketWorker.Destroy;
+    end;
+  end;
 end;
 
 exports
