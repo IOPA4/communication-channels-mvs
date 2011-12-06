@@ -10,7 +10,6 @@ uses
 type
 
   TDescriptionID = (
-
     DESC_TCPIP = 0,                 //'TCP/IP',
     DESC_IP_ADDRESS,                //'IP адрес',
     DESC_TCP_PORT,                  //'Порт',
