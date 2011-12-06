@@ -12,6 +12,9 @@
 			<Projects Include="Test\SDIAPP.dproj">
 				<Dependencies/>
 			</Projects>
+			<Projects Include="HAYES\HAYES.dproj">
+				<Dependencies/>
+			</Projects>
 		</ItemGroup>
 		<ProjectExtensions>
 			<Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -47,14 +50,23 @@
 		<Target Name="SDIAPP:Make">
 			<MSBuild Targets="Make" Projects="Test\SDIAPP.dproj"/>
 		</Target>
+		<Target Name="HAYES">
+			<MSBuild Projects="HAYES\HAYES.dproj"/>
+		</Target>
+		<Target Name="HAYES:Clean">
+			<MSBuild Targets="Clean" Projects="HAYES\HAYES.dproj"/>
+		</Target>
+		<Target Name="HAYES:Make">
+			<MSBuild Targets="Make" Projects="HAYES\HAYES.dproj"/>
+		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="RS232;Ethernet;SDIAPP"/>
+			<CallTarget Targets="RS232;Ethernet;SDIAPP;HAYES"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="RS232:Clean;Ethernet:Clean;SDIAPP:Clean"/>
+			<CallTarget Targets="RS232:Clean;Ethernet:Clean;SDIAPP:Clean;HAYES:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="RS232:Make;Ethernet:Make;SDIAPP:Make"/>
+			<CallTarget Targets="RS232:Make;Ethernet:Make;SDIAPP:Make;HAYES:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>
