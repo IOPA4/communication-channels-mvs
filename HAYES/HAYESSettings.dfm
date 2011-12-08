@@ -34,6 +34,7 @@ object fSettings: TfSettings
       Height = 24
       Style = csDropDownList
       TabOrder = 0
+      OnSelect = cbProfilesSelect
     end
     object btCreateProf: TButton
       Left = 80
@@ -43,7 +44,7 @@ object fSettings: TfSettings
       Anchors = [akRight, akBottom]
       Caption = #1057#1086#1079#1076#1072#1090#1100
       TabOrder = 1
-      ExplicitLeft = 78
+      OnClick = btCreateProfClick
     end
     object btDelProf: TButton
       Left = 297
@@ -53,7 +54,7 @@ object fSettings: TfSettings
       Anchors = [akRight, akBottom]
       Caption = #1059#1076#1072#1083#1080#1090#1100
       TabOrder = 2
-      ExplicitLeft = 295
+      OnClick = btDelProfClick
     end
     object btChangeProf: TButton
       Left = 185
@@ -63,7 +64,7 @@ object fSettings: TfSettings
       Anchors = [akRight, akBottom]
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100
       TabOrder = 3
-      ExplicitLeft = 183
+      OnClick = btChangeProfClick
     end
   end
   object tbCancel: TButton
@@ -74,7 +75,6 @@ object fSettings: TfSettings
     Anchors = [akRight, akBottom]
     Caption = #1054#1090#1084#1077#1085#1072
     TabOrder = 1
-    ExplicitTop = 402
   end
   object btOk: TButton
     Left = 299
@@ -84,7 +84,6 @@ object fSettings: TfSettings
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
     TabOrder = 2
-    ExplicitTop = 402
   end
   object gbExchangeSettings: TGroupBox
     Left = 4
@@ -182,7 +181,7 @@ object fSettings: TfSettings
     object lbInactiveTimeout: TLabel
       Left = 4
       Top = 16
-      Width = 187
+      Width = 156
       Height = 16
       Caption = 'Break Connection Time Out'
     end
@@ -191,6 +190,7 @@ object fSettings: TfSettings
       Top = 16
       Width = 180
       Height = 24
+      NumbersOnly = True
       TabOrder = 0
     end
     object cbWaitTone: TCheckBox
@@ -252,7 +252,7 @@ object fSettings: TfSettings
       Left = 5
       Top = 46
       Width = 58
-      Height = 15
+      Height = 16
       Caption = 'Baud Rate'
     end
     object cbComPort: TComboBox

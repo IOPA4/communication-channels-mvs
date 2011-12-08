@@ -18,15 +18,19 @@ uses
   HAYESCaptions in 'HAYESCaptions.pas',
   HAYESConstants in 'HAYESConstants.pas',
   HAYESExchange in 'HAYESExchange.pas',
-  HAYESSettings in 'HAYESSettings.pas' {fSettings};
+  HAYESSettings in 'HAYESSettings.pas' {fSettings},
+  HAYESAddProfileSettings in 'HAYESAddProfileSettings.pas' {fNewProfile};
 
 {$R *.res}
+var
+  SettingsManager:TChanSettingsManager;
+
 function Channel_ShowWindow():Integer;
 begin
  Result:=RET_ERR;
 //  if pLangList=NIL then Exit;
- //Result:=RET_OK;
-// SettingsManager.ShowWindow;
+ Result:=RET_OK;
+ SettingsManager.ShowWindow;
 
 
 
@@ -40,14 +44,14 @@ end;
 function Channel_GetSettings(var ChannelSettings: TChannelSettings):Integer;
 begin
 
-  //Result:=RET_OK;
-  //ChannelSettings := SettingsManager.FLibSettings;
+  Result:=RET_OK;
+  ChannelSettings := SettingsManager.FLibSettings;
 
 end;
 
 function Channel_GetStatus():Integer;
 begin
-  //Result:=RET_OK;
+  Result:=RET_OK;
 end;
 
 function Channel_Open(ProfileName:PChar):Integer;
@@ -99,13 +103,13 @@ end;
 function Channel_GetProfilesCount(var Count:Integer):Integer;
 begin
 
-  //Result := SettingsManager.GetProfilesCount(Count);
+  Result := SettingsManager.GetProfilesCount(Count);
 end;
 
 function Channel_GetProfilesName(N:Integer; var ProfileName:PChar):Integer;
 begin
 
- // Result:= SettingsManager.GetProfilesName(N, ProfileName);
+  Result:= SettingsManager.GetProfilesName(N, ProfileName);
 
 end;
 
@@ -149,14 +153,14 @@ begin
 	case Reason of
 		DLL_PROCESS_ATTACH:
    	begin
-         //SettingsManager := TChanSettingsManager.create();
-         //SettingsManager.RefreshProfilsArray();
+         SettingsManager := TChanSettingsManager.create();
+         SettingsManager.RefreshProfilsArray();
          //SocketWorker := TClientSocketWorker.Create();
    	end;
 		DLL_PROCESS_DETACH:
    	begin
-    //if SettingsManager <> Nil then
-      //SettingsManager.Destroy;
+    if SettingsManager <> Nil then
+      SettingsManager.Destroy;
 
     //if SocketWorker <> Nil then
       //SocketWorker.Destroy;
