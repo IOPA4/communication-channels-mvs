@@ -5,7 +5,30 @@ interface
   HAYESConstants;
 
   function GetDescription(DescID:Integer; var pDesc:PChar):Integer;
+  function GetErrorDescription(ErrorID:Integer; var pDesc:PChar):Integer;
+
   type
+
+   TErrorID = (
+    ERR_DONT_ACTIVATED,
+    ERR_MODEM_NOT_RESP,
+    ERR_DONT_HAYES,
+    ERR_BAD_CABLE_OR_DONT_HAYES,
+    ERR_CANT_CONNECT,
+    ERR_CONNECTION_BROKEN,
+    ERR_NOT_PNONE_NUMBER,
+    ERR_CONNECTION_BREAKED_BY_USER,
+    ERR_SECOND_DIALOG,
+    ERR_SETSETTTING_ON_CONNECT,
+    ERR_REGISTRY,
+    ERR_INC_SETTINGS_STR,
+    ERR_INC_SETTINGS,
+    ERR_CANT_APPLY_BAUD,
+    ERR_MODEM_NOT_FOUND,
+    ERR_CANT_ON_CMD_MODE,
+
+    ERRORS_N
+  );
 
     TDescriptionID = (
     //0
@@ -57,6 +80,9 @@ interface
     DESC_CONFIRM_DELETE_PROF,       //'Подтвердите удаление профиля'
     DESC_LABEL_COM,                 //'Последовательный порт'
     DESC_EXCHANGE_SETTINGS,         //'Настройки обмена',
+
+    //6
+    DESC_MODEM_CONNECTION,         //'Модемное соединение'
 
     DESC_N
   );
@@ -110,16 +136,48 @@ interface
     'Подтвердите изменение профиля',
     'Подтвердите удаление профиля',
     'Последовательный порт',
-    'Настройки обмена'
+    'Настройки обмена',
+    'Модемное соединение'
+  );
+
+  ErrorDescriptions: array [0..Integer(TErrorID.ERRORS_N) - 1] of String = (
+
+    'Соединение не установлено',
+    'Истек тайм-аут ожидания ответа модема',
+    'Модем не поддерживает систему команд HAYES',
+    'Неполный кабель или модем не поддерживает систему команд HAYES',
+    'Не удалось соединиться с удаленным модемом',
+    'Соединение разорвано',
+    'Не задан номер телефона',
+    'Соединение прервано пользователем',
+    'Попытка создать второй диалог соединения',
+    'Нельзя поменять настройки при установленном соединении',
+    'Ошибка работы с реестром',
+    'Некорректная строка дополнительных параметров',
+    'Некорректные параметры настройки',
+    'Не удалось переключить модем на заданную скорость',
+    'Модем не найден',
+    'Не удалось переключить модем в командный режим'
   );
 
 implementation
-
+//------------------------------------------------------------------------------
 function GetDescription(DescID:Integer; var pDesc:PChar):Integer;
 begin
      if DescID < Integer(TDescriptionID.DESC_N) then
      begin
         pDesc := PChar(Descriptions[DescID]);
+        Result := RET_OK;
+     end else
+        Result := RET_ERR;
+end;
+
+//------------------------------------------------------------------------------
+function GetErrorDescription(ErrorID:Integer; var pDesc:PChar):Integer;
+begin
+    if ErrorID < Integer(TErrorID.ERRORS_N) then
+     begin
+        pDesc := PChar(ErrorDescriptions[ErrorID]);
         Result := RET_OK;
      end else
         Result := RET_ERR;

@@ -104,7 +104,7 @@ implementation
 uses
   AddProfileSettings;
 //------------------------------------------------------------------------------
-//                    TChanSettingsManager
+//                    TChanSettingsManager implementation
 //------------------------------------------------------------------------------
 constructor TChanSettingsManager.create();
 var
@@ -500,7 +500,7 @@ function TChanSettingsManager.ModifySettingsFile(
 
   end;
 //------------------------------------------------------------------------------
-//                  TForm2;
+//                  TForm2 implementation
 //------------------------------------------------------------------------------
   procedure TForm2.FillSettingsOfWindow(var ChannelSettings:TChannelSettings);
   begin

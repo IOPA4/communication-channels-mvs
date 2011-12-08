@@ -50,6 +50,9 @@
 			<DCCReference Include="HAYESSettings.pas">
 				<Form>fSettings</Form>
 			</DCCReference>
+			<DCCReference Include="HAYESAddProfileSettings.pas">
+				<Form>fNewProfile</Form>
+			</DCCReference>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -72,6 +75,7 @@
 						<Parameters Name="UseLauncher">False</Parameters>
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+						<Parameters Name="HostApplication">C:\Progect\comm_channels\communication-channels-mvs\Test\SDIAPP.exe</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
