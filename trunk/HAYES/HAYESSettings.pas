@@ -6,6 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, StdCtrls,
   IniFiles,
+  Registry,
   HAYESConstants,
   HAYESCaptions;
 
@@ -116,13 +117,37 @@ implementation
 {$R *.dfm}
 uses
 HAYESAddProfileSettings;
+
+function GetSerialPortNames(var List:TStringList): Integer;
+var
+  reg: TRegistry;
+  l: TStringList;
+  n: integer;
+begin
+  l := TStringList.Create;
+  reg := TRegistry.Create;
+
+  try
+    reg.RootKey := HKEY_LOCAL_MACHINE;
+    reg.OpenKey(REG_KEY_SERIALCOMM, false);
+    reg.GetValueNames(l);
+    for n := 0 to l.Count - 1 do
+      List.Add(reg.ReadString(l[n]));
+
+    Result := RET_OK;
+  finally
+    reg.Free;
+    l.Free;
+  end;
+end;
 //------------------------------------------------------------------------------
 //                  TChanSettingsManager implementation;
 //------------------------------------------------------------------------------
 constructor TChanSettingsManager.create();
 var
   pc:PChar;
-  Res:Integer;
+  Res, i :Integer;
+  PortList:TstringList;
 begin
 
     try
@@ -139,6 +164,13 @@ begin
 
         if GetDescription(Integer(TDescriptionID.DESC_LABEL_COM), pc) = RET_OK then
           m_fSettings.lbPortName.Caption := string(pc);
+
+        if GetDescription(Integer(TDescriptionID.DESC_INACTIVE_TIMEOUT),
+          pc) = RET_OK then
+          m_fSettings.lbInactiveTimeout.Caption := string(pc);
+
+        if GetDescription(Integer(TDescriptionID.DESC_CONNECT), pc) = RET_OK then
+          m_fSettings.gbConnectionSettings.Caption := string(pc);
 
         if GetDescription(Integer(TDescriptionID.DESC_COM_BAUD_RATE), pc) = RET_OK then
           m_fSettings.lbBaudRate.Caption := string(pc);
@@ -172,7 +204,17 @@ begin
           RET_OK then
           m_fSettings.btDelProf.Caption := string(pc);
 
+        for i := 0 to Integer(TBaudRateID.BRID_N) - 1  do
+        begin
+          if GetDescription(Integer(TDescriptionID.DESC_COM_BAUD_RATE_300) + i,
+            pc) = RET_OK then
+            m_fSettings.cbBaudRate.Items.Append(string(pc));
+        end;
 
+        PortList := TStringList.Create;
+
+        GetSerialPortNames(PortList);
+        m_fSettings.cbComPort.Items.AddStrings(PortList);
         m_LibSettings.ProfilName      := DEFVAL_PROFILE_NAME;
         m_LibSettings.PhoneNumber     := DEFVAL_PHONE_NUMBER;
         m_LibSettings.ComNumber       := DEFVAL_COM_NUMBER;
@@ -182,9 +224,9 @@ begin
         m_LibSettings.IsWaitTone      := DEFVAL_IS_WAIT_TONE;
         m_LibSettings.IsTone          := DEFVAL_IS_TONE;
       //
-        m_LibSettings.Delay := DEFVAL_DELAY_BEFORE;
-	      m_LibSettings.TimeOuts := DEFVAL_WAIT_ANSWER;
-	      m_LibSettings.Retry := DEFVAL_RETRY_COUNT;
+        m_LibSettings.Delay           := DEFVAL_DELAY_BEFORE;
+	      m_LibSettings.TimeOuts        := DEFVAL_WAIT_ANSWER;
+	      m_LibSettings.Retry           := DEFVAL_RETRY_COUNT;
 
         SetProfileListLength(1);
 
@@ -197,9 +239,9 @@ begin
         m_Profils[0].IsWaitTone      := DEFVAL_IS_WAIT_TONE;
         m_Profils[0].IsTone          := DEFVAL_IS_TONE;
       //
-        m_Profils[0].Delay := DEFVAL_DELAY_BEFORE;
-	      m_Profils[0].TimeOuts := DEFVAL_WAIT_ANSWER;
-	      m_Profils[0].Retry := DEFVAL_RETRY_COUNT;
+        m_Profils[0].Delay            := DEFVAL_DELAY_BEFORE;
+	      m_Profils[0].TimeOuts         := DEFVAL_WAIT_ANSWER;
+	      m_Profils[0].Retry            := DEFVAL_RETRY_COUNT;
 
         RefreshWindow(0);
 
@@ -226,7 +268,7 @@ begin
           m_fSettings.cbBaudRate.ItemIndex := m_Profils[Index].BaudRateIndex;
 
           m_fSettings.edInactiveTimeout.Text :=
-            IntToStr(BaudRate[m_Profils[Index].InactiveTimeout]);
+            IntToStr(m_Profils[Index].InactiveTimeout);
           m_fSettings.cbWaitTone.Checked := m_Profils[Index].IsWaitTone;
           m_fSettings.cbToneType.Checked := m_Profils[Index].IsTone;
           m_fSettings.edPortDelayBeforeSend.Text := IntToStr(m_Profils[
@@ -395,7 +437,7 @@ function TChanSettingsManager.RefreshProfilsArray():Integer;
               if Pos(PROFNAME_PREFIX + NameDll + '_',Lines[i]) = 1 then
                 begin
 
-                 Name := Copy(Lines[i], 18, Length(Lines[i]));
+                 Name := Copy(Lines[i], 15, Length(Lines[i]));
                  if StrLen(PChar(Name)) > 0 then
                   begin
 

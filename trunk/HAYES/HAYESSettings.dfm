@@ -181,14 +181,14 @@ object fSettings: TfSettings
     object lbInactiveTimeout: TLabel
       Left = 4
       Top = 16
-      Width = 156
+      Width = 285
       Height = 16
       Caption = 'Break Connection Time Out'
     end
     object edInactiveTimeout: TEdit
-      Left = 221
+      Left = 295
       Top = 16
-      Width = 180
+      Width = 96
       Height = 24
       NumbersOnly = True
       TabOrder = 0
@@ -196,7 +196,7 @@ object fSettings: TfSettings
     object cbWaitTone: TCheckBox
       Left = 4
       Top = 38
-      Width = 179
+      Width = 261
       Height = 18
       Caption = 'Wait Tone'
       TabOrder = 1
@@ -204,7 +204,7 @@ object fSettings: TfSettings
     object cbToneType: TCheckBox
       Left = 4
       Top = 61
-      Width = 238
+      Width = 269
       Height = 22
       Caption = 'Tone type of call'
       TabOrder = 2
@@ -256,18 +256,20 @@ object fSettings: TfSettings
       Caption = 'Baud Rate'
     end
     object cbComPort: TComboBox
-      Left = 248
-      Top = 16
-      Width = 145
+      Left = 297
+      Top = 13
+      Width = 96
       Height = 24
+      Style = csDropDownList
       Anchors = [akTop, akRight]
       TabOrder = 0
     end
     object cbBaudRate: TComboBox
-      Left = 248
+      Left = 297
       Top = 43
-      Width = 145
+      Width = 96
       Height = 24
+      Style = csDropDownList
       Anchors = [akTop, akRight]
       TabOrder = 1
     end
