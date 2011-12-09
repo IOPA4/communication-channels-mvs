@@ -36,7 +36,7 @@ const
   RET_OK = 0;
   RET_ERR = $FF;
 
-//settings
+
 
 //settings
   EMPTY_PROFILE_NAME        = '';
@@ -81,6 +81,41 @@ const
           115200,      //'115200'
           128000       //'128000'
   );
+
+  REG_KEY_SERIALCOMM = 'HARDWARE\DEVICEMAP\SERIALCOMM';
+
+  //AT commands
+
+    AT            = 'AT\x0D';
+	  ATH           = 'ATH\x0D';
+	  ATH0          = 'ATH0\x0D';
+	  ATE1          = 'ATE1\x0D';
+	  ATQ0V1        = 'ATQ0V1\x0D';
+	  ATM0          = 'ATM0\x0D';
+	  ATM1          = 'ATM1\x0D';
+	  ATL           = 'ATL%d\x0D';
+	  ATX3          = 'ATX3\x0D';
+	  ATX4          = 'ATX4\x0D';
+	  ATS           = 'ATS%d=%d\x0D';
+	  ATslQ0        = 'AT\\Q0\x0D';
+	  ATslQ2        = 'AT\\Q2\x0D';
+	  ATplMR0       = 'AT+MR=0\x0D';
+	  ATplER0       = 'AT+ER=0\x0D';
+	  ATplDR0       = 'AT+DR=0\x0D';
+	  ATplIPR       = 'AT+IPR=%d\x0D';
+	  ATampD0       = 'AT&D0\x0D';
+	  ATampD2       = 'AT&D2\x0D';
+	  ATampC1       = 'AT&C1\x0D';
+	  ATampS1       = 'AT&S1\x0D';
+	  ATampF        = 'AT&F\x0D';
+	  ATampK0       = 'AT&K0\x0D';
+	  ATampK3       = 'AT&K3\x0D';
+	  PlPlPl        = '+++';
+	  ATplIFC00     = 'AT+IFC=0,0\x0D';
+	  ATplIFC02     = 'AT+IFC=0,2\x0D';
+	  ATcapSPBD_BL  = 'AT^SPBD=BL\x0D';
+	  AT_CFUN       = 'AT+CFUN=%d\x0D';
+
 implementation
 
 end.
