@@ -30,7 +30,7 @@
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 			<DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
 			<VerInfo_Locale>1049</VerInfo_Locale>
-			<DCC_UnitSearchPath>C:\Program Files (x86)\Embarcadero\RAD Studio\7.0\Components\tpaPro\run;F:\mvs\Delphi\Components\AsyncPro\run;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_UnitSearchPath>C:\Program Files (x86)\Embarcadero\RAD Studio\7.0\Components\tpaPro\run;C:\Progect\AsyncPro\run;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_Alignment>1</DCC_Alignment>
 			<DCC_ExeOutput>..\..\Programm\Channel\</DCC_ExeOutput>
 			<DCC_DependencyCheckOutputName>..\..\Programm\Channel\RS232.dll</DCC_DependencyCheckOutputName>

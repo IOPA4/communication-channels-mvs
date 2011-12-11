@@ -20,6 +20,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_UnitSearchPath>C:\Progect\AsyncPro\run;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_E>false</DCC_E>
 			<DCC_DependencyCheckOutputName>HAYES.dll</DCC_DependencyCheckOutputName>
@@ -75,7 +76,7 @@
 						<Parameters Name="UseLauncher">False</Parameters>
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
-						<Parameters Name="HostApplication">C:\Progect\comm_channels\communication-channels-mvs\Test\SDIAPP.exe</Parameters>
+						<Parameters Name="HostApplication">D:\Progect\comm_channels\communication-channels-mvs\Test\SDIAPP.exe</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>

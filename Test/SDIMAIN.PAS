@@ -120,10 +120,10 @@ begin
         fnChannelGetProfilesName := getProcAddress(hDll, PWideChar(
           'Channel_GetStatus'));
         fnChannelConnectDll := getProcAddress(hDll, PWideChar(
-          'Channel_GetProfilesName'));
+          'Channel_ConnectDll'));
 
         //--
-        fnChannelGetProfilesCount(Temp);
+        fnChannelConnectDll(PChar('rus'));
         fnChannelShowWindow();
      End;
 

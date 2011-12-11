@@ -2,11 +2,15 @@ unit HAYESCaptions;
 
 interface
  uses
+  SysUtils,
+  Forms,
+  IniFiles,
   HAYESConstants;
 
   function GetDescription(DescID:Integer; var pDesc:PChar):Integer;
   function GetErrorDescription(ErrorID:Integer; var pDesc:PChar):Integer;
-
+  function InitDescriptionsArray(pLang:Pointer):Integer;
+  Procedure OutSwapDescriptions();
   type
 
    TErrorID = (
@@ -80,13 +84,12 @@ interface
     DESC_CONFIRM_DELETE_PROF,       //'Подтвердите удаление профиля'
     DESC_LABEL_COM,                 //'Последовательный порт'
     DESC_EXCHANGE_SETTINGS,         //'Настройки обмена',
-
     //6
     DESC_MODEM_CONNECTION,         //'Модемное соединение'
 
     DESC_N
   );
-  const
+  var
     Descriptions: array [0..Integer(TDescriptionID.DESC_N) - 1] of String = (
     //0
     'Общие настройки',
@@ -181,6 +184,61 @@ begin
         Result := RET_OK;
      end else
         Result := RET_ERR;
+end;
+//------------------------------------------------------------------------------
+function InitDescriptionsArray(pLang:Pointer):Integer;
+var
+  IniFile:TIniFile;
+  i:Integer;
+  HexNum:string;
+begin
+  Result := RET_ERR;
+//  IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
+//            'HAYES_' + string(pLang) + ".lng");
+   IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
+            'HAYES_rus.lng');
+   if (IniFile <> nil) then
+   begin
+    for i := 0 to Integer(TDescriptionID.DESC_N) - 1  do
+    begin
+      HexNum :=  '$'+Format('%.2x',[i]);
+      Descriptions[i] := IniFile.ReadString('Captions', HexNum, HexNum);
+    end;
+
+    for i := 0 to Integer(TDescriptionID.DESC_N) - 1  do
+    begin
+      HexNum :=  '$'+Format('%.2x',[i]);
+      ErrorDescriptions[i] := IniFile.ReadString('Errors', HexNum, HexNum);
+    end;
+      Result := RET_OK;
+   end;
+end;
+
+//------------------------------------------------------------------------------
+
+Procedure OutSwapDescriptions();
+var
+  IniFile:TIniFile;
+  i:Integer;
+  HexNum:string;
+begin
+    IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
+            'HAYES_rus.lng');
+   if (IniFile <> nil) then
+   begin
+    for i := 0 to Integer(TDescriptionID.DESC_N) - 1  do
+    begin
+      HexNum :=  '$'+Format('%.2x',[i]);
+      IniFile.WriteString('Captions', HexNum, Descriptions[i]);
+    end;
+
+    for i := 0 to Integer(TErrorID.ERRORS_N) - 1  do
+    begin
+      HexNum :=  '$'+Format('%.2x',[i]);
+      IniFile.WriteString('Errors', HexNum, ErrorDescriptions[i]);
+    end;
+   end;
+
 end;
 
 end.

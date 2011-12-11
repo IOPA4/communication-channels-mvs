@@ -2,11 +2,14 @@ unit EthernetCaptions;
 
 interface
 uses
+  SysUtils,
+  Forms,
+  IniFiles,
   EthernetErrors;
 
   function GetDescription(DescID:Integer; var pDesc:PChar):Integer;
-
-
+  function InitDescriptionsArray(pLang:Pointer):Integer;
+  Procedure OutSwapDescriptions();
 type
 
   TDescriptionID = (
@@ -35,7 +38,7 @@ type
     DESC_N
   );
 
-const
+var
   Descriptions: array [0..Integer(TDescriptionID.DESC_N) - 1] of String = (
 
     'TCP/IP',
@@ -63,6 +66,7 @@ const
 
 implementation
 
+//------------------------------------------------------------------------------
 function GetDescription(DescID:Integer; var pDesc:PChar):Integer;
 begin
      if DescID < Integer(TDescriptionID.DESC_N) then
@@ -71,6 +75,50 @@ begin
         Result := RET_OK;
      end else
         Result := RET_ERR;
+end;
+
+//------------------------------------------------------------------------------
+function InitDescriptionsArray(pLang:Pointer):Integer;
+var
+  IniFile:TIniFile;
+  i:Integer;
+  HexNum:string;
+begin
+  Result := RET_ERR;
+//  IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
+//            'Ethernet_' + string(pLang) + ".lng");
+   IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
+            'Ethernet_rus.lng');
+   if (IniFile <> nil) then
+   begin
+    for i := 0 to Integer(TDescriptionID.DESC_N) - 1  do
+    begin
+      HexNum :=  '$'+Format('%.2x',[i]);
+      Descriptions[i] := IniFile.ReadString('Captions', HexNum, HexNum);
+    end;
+      Result := RET_OK;
+   end;
+end;
+
+//------------------------------------------------------------------------------
+
+Procedure OutSwapDescriptions();
+var
+  IniFile:TIniFile;
+  i:Integer;
+  HexNum:string;
+begin
+    IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
+            'Ethernet_rus.lng');
+   if (IniFile <> nil) then
+   begin
+    for i := 0 to Integer(TDescriptionID.DESC_N) - 1  do
+    begin
+      HexNum :=  '$'+Format('%.2x',[i]);
+      IniFile.WriteString('Captions', HexNum, Descriptions[i]);
+    end;
+   end;
+
 end;
 
 end.

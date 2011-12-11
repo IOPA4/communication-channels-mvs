@@ -76,7 +76,7 @@
 						<Parameters Name="UseLauncher">False</Parameters>
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
-						<Parameters Name="HostApplication">C:\Progect\comm_channels\communication-channels-mvs\Test\SDIAPP.exe</Parameters>
+						<Parameters Name="HostApplication">D:\Progect\comm_channels\communication-channels-mvs\Test\SDIAPP.exe</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
