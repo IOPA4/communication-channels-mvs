@@ -260,8 +260,8 @@ object FormProperties: TFormProperties
       OnChange = edPortDelayBeforeSendChange
     end
     object CheckBox1: TCheckBox
-      Left = 12
-      Top = 360
+      Left = 22
+      Top = 361
       Width = 251
       Height = 31
       Margins.Left = 4

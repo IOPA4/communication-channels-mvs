@@ -5,7 +5,8 @@ interface
 uses
 
   Windows,
-  winsock;
+  Winsock,
+  EthernetConstants;
 
 type
 
@@ -23,6 +24,8 @@ type
       m_Active:Boolean;
       m_State: Boolean;
 
+
+      m_Buf:array[0..BUF_MAX_LEN] of Byte;
     public
 
       constructor Create();
@@ -135,9 +138,19 @@ Begin
 End;
 
 function TClientSocketWorker.WriteBlock(pBlock:Pointer; BlockSize:Word):Integer;
+var
+  Count :Integer;
 Begin
 
    Result := RET_ERR;
+
+   if m_Socket <> INVALID_SOCKET then
+   begin
+   //чистка входящего буфера
+     repeat
+       Count := Recv(m_Socket, m_Buf, BUF_MAX_LEN, 0);
+     until Count = 0;
+   end;
 
    if m_Socket <> INVALID_SOCKET then
    begin

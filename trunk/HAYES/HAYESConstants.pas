@@ -28,6 +28,20 @@ interface
 
       BRID_N
     );
+    //ответы модема
+
+    TModemAnswer = (
+
+    	OK = 0,
+	    CONNECT,
+	    RING,
+	    NO_CARRIER,
+	    ERROR,
+	    NO_DIALTONE,
+	    BUSY,
+	    NO_ANSWER,
+	    MAS_N
+    );
 
 const
   NameDll = 'HAYES';
@@ -82,13 +96,20 @@ const
           128000       //'128000'
   );
 
+  //путь реестра для получения информации о доступных COM-портах
   REG_KEY_SERIALCOMM = 'HARDWARE\DEVICEMAP\SERIALCOMM';
 
-  //AT commands
+  //максимальный размер ответа от модема в символах
+  MAX_RESP_LENGTH = 255;
+
+  //AT commands list
 
     AT            = 'AT\x0D';
 	  ATH           = 'ATH\x0D';
 	  ATH0          = 'ATH0\x0D';
+    ATQ0          = 'ATQ0\x0D';
+    ATV1          = 'ATV1\x0D';
+    ATE0          = 'ATE0\x0D';
 	  ATE1          = 'ATE1\x0D';
 	  ATQ0V1        = 'ATQ0V1\x0D';
 	  ATM0          = 'ATM0\x0D';
@@ -115,6 +136,20 @@ const
 	  ATplIFC02     = 'AT+IFC=0,2\x0D';
 	  ATcapSPBD_BL  = 'AT^SPBD=BL\x0D';
 	  AT_CFUN       = 'AT+CFUN=%d\x0D';
+
+
+    //Modem Answer
+    cOK          = 'OK\x0D\x0A';
+    cCONNECT     = 'CONNECT\x0D\x0A';
+    cRING        = 'RING\x0D\x0A';
+    cNO_CARRIER  = 'NO CARRIER\x0D\x0A';
+    cERROR       = 'ERROR\x0D\x0A';
+    cNO_DIALTONE = 'NO DIALTONE\x0D\x0A';
+    cBUSY        = 'BUSY\x0D\x0A';
+    cNO_ANSWER   = 'NO ANSWER\x0D\x0A';
+    cCONNECT_t   = 'CONNECT\xFF\x0D\x0A';
+
+    MODEM_ANSWER_TIMEOUT = 1000;
 
 implementation
 

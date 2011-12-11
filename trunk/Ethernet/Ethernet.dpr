@@ -26,29 +26,23 @@ var
   SettingsManager:TChanSettingsManager;
   Temp:Integer;
 
-
-function GetString(Code:Integer):String;
-  begin
-//    if TStringList(pLangList).Count <Code
-//      then Result:=''
-//    else Result:=TStringList(pLangList).Strings[Code-1];
-  end;
+//------------------------------------------------------------------------------
 function Channel_ShowWindow():Integer;
 begin
  Result:=RET_ERR;
 //  if pLangList=NIL then Exit;
  Result:=RET_OK;
  SettingsManager.ShowWindow;
-
-
-
 end;
 
+//------------------------------------------------------------------------------
 function Channel_SetSettings(ProfileName:String):Integer;
 begin
   Result:=RET_OK;
 end;
 
+
+//------------------------------------------------------------------------------
 function Channel_GetSettings(var ChannelSettings: TChannelSettings):Integer;
 begin
 
@@ -57,11 +51,13 @@ begin
 
 end;
 
+//------------------------------------------------------------------------------
 function Channel_GetStatus():Integer;
 begin
   Result:=RET_OK;
 end;
 
+//------------------------------------------------------------------------------
 function Channel_Open(ProfileName:PChar):Integer;
 
 begin
@@ -72,6 +68,7 @@ begin
   end;
 end;
 
+//------------------------------------------------------------------------------
 function Channel_Close():Integer;
 begin
 
@@ -80,40 +77,37 @@ begin
   except
     Result := RET_ERR;
   end;
-
-
 end;
 
+//------------------------------------------------------------------------------
 function Channel_Write(pBlock:Pointer;Count:Word):Integer;
 begin
-
   try
     Result := SocketWorker.WriteBlock(pBlock, Count);
   except
     Result := RET_ERR;
   end;
-
 end;
 
+//------------------------------------------------------------------------------
 function Channel_Read(pBlock:Pointer; var Count:Word):Integer;
 begin
   try
-
     Result := SocketWorker.ReadBlock(pBlock, Count, 1024);
-
   except
     Result := RET_ERR;
   end;
 
 end;
 
-//
+//------------------------------------------------------------------------------
 function Channel_GetProfilesCount(var Count:Integer):Integer;
 begin
 
   Result := SettingsManager.GetProfilesCount(Count);
 end;
 
+//------------------------------------------------------------------------------
 function Channel_GetProfilesName(N:Integer; var ProfileName:PChar):Integer;
 begin
 
@@ -121,49 +115,29 @@ begin
 
 end;
 
+//------------------------------------------------------------------------------
 function Channel_ConnectDll(pLang:Pointer):Integer;
 begin
-  Result:=RET_OK;
-  //pLangList:=pLang;
-//  FormProperties.Caption:= GetString(13)+' ('+NameDll+')';
-//  FormProperties.GroupBox1.Caption:=GetString(46);
-//  FormProperties.Label1.Caption:=GetString(113);
-//  FormProperties.Label2.Caption:=GetString(114);
-//  FormProperties.Label3.Caption:=GetString(115);
-//  FormProperties.Label4.Caption:=GetString(116);
-//  FormProperties.Label5.Caption:=GetString(117);
-//  FormProperties.Label6.Caption:=GetString(118);
-//  FormProperties.Label7.Caption:=GetString(119);
-//  FormProperties.Label8.Caption:=GetString(129);
-//  FormProperties.CheckBox1.Caption:=GetString(120);
-//  FormProperties.GroupBox2.Caption:=GetString(121);
-//  FormProperties.Button1.Caption:=GetString(4);
-//  FormProperties.Button2.Caption:=GetString(49);
-//  FormProperties.ButtonOK.Caption:=GetString(3);
-//
-//  FormProperties.cbParity.Clear;
-//  FormProperties.cbParity.Items.Add(GetString(21));
-//  FormProperties.cbParity.Items.Add(GetString(123));
-//  FormProperties.cbParity.Items.Add(GetString(124));
-//  FormProperties.cbParity.Items.Add(GetString(125));
-//  FormProperties.cbParity.Items.Add(GetString(126));
-//  FormProperties.cbParity.ItemIndex:=0;
-//
-//  FormProperties.cbFlow.Clear;
-//  FormProperties.cbFlow.Items.Add(GetString(21));
-//  FormProperties.cbFlow.Items.Add(GetString(127));
-//  FormProperties.cbFlow.Items.Add(GetString(128));
-//  FormProperties.cbFlow.ItemIndex:=0;
+  Result:= InitDescriptionsArray(pLang);;
+
+  if (Result <> RET_OK) then
+      Exit;
+
+  SettingsManager := TChanSettingsManager.create();
+  Result := SettingsManager.RefreshProfilsArray();
+
 end;
 
+//------------------------------------------------------------------------------
 procedure DLLEntryPoint(Reason: DWORD);
 begin
 	case Reason of
 		DLL_PROCESS_ATTACH:
    	begin
-         SettingsManager := TChanSettingsManager.create();
-         SettingsManager.RefreshProfilsArray();
+    //OutSwapDescriptions();
+
          SocketWorker := TClientSocketWorker.Create();
+
    	end;
 		DLL_PROCESS_DETACH:
    	begin
@@ -176,6 +150,7 @@ begin
   end;
 end;
 
+//------------------------------------------------------------------------------
 exports
   Channel_ConnectDll,
   Channel_ShowWindow,
@@ -188,7 +163,7 @@ exports
   Channel_Read,
   Channel_GetProfilesCount,
   Channel_GetProfilesName;
-
+//------------------------------------------------------------------------------
 begin
 
   DllProc := @DLLEntryPoint;

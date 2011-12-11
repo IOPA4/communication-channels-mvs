@@ -17,7 +17,7 @@ uses
   SysUtils,
   Classes,
   IniFiles,
-  AdPort,
+  SerialPort,
   Unit1 in 'Unit1.pas' {FormProperties};
 
 var

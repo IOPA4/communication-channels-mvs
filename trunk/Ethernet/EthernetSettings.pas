@@ -109,7 +109,6 @@ uses
 constructor TChanSettingsManager.create();
 var
   pc:PChar;
-  Res:Integer;
 begin
 
     try
@@ -275,9 +274,17 @@ begin
                Count:=Count+1;
       end;
 
+    end else
+    begin
+     Result:= RET_ERR;
     end;
-    finally
-       CloseSettingsFile();
+
+    CloseSettingsFile();
+    except
+    begin
+      CloseSettingsFile();
+       Result:= RET_ERR;
+    end;
   end;
 
 end;
