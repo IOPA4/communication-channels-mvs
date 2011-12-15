@@ -26,8 +26,6 @@ object SDIAppForm: TSDIAppForm
     AutoHint = True
     Panels = <>
     SimplePanel = True
-    ExplicitTop = 129
-    ExplicitWidth = 280
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -43,7 +41,6 @@ object SDIAppForm: TSDIAppForm
     ShowHint = True
     TabOrder = 1
     Wrapable = False
-    ExplicitWidth = 280
     object ToolButton9: TToolButton
       Left = 5
       Top = 0
@@ -82,15 +79,6 @@ object SDIAppForm: TSDIAppForm
       Top = 0
       Action = EditPaste1
     end
-  end
-  object btConnect: TButton
-    Left = 8
-    Top = 36
-    Width = 75
-    Height = 25
-    Caption = 'Connect'
-    TabOrder = 2
-    OnClick = btConnectClick
   end
   object MainMenu1: TMainMenu
     Images = ImageList1

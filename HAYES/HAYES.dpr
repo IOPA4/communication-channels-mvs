@@ -19,7 +19,8 @@ uses
   HAYESConstants in 'HAYESConstants.pas',
   HAYESExchange in 'HAYESExchange.pas',
   HAYESSettings in 'HAYESSettings.pas' {fSettings},
-  HAYESAddProfileSettings in 'HAYESAddProfileSettings.pas' {fNewProfile};
+  HAYESAddProfileSettings in 'HAYESAddProfileSettings.pas' {fNewProfile},
+  ComPort in 'ComPort.pas';
 
 {$R *.res}
 var
@@ -62,6 +63,7 @@ function Channel_Open(ProfileName:PChar):Integer;
 
 begin
   try
+
     //Result := SocketWorker.Open();
   except
     //Result := RET_ERR;
@@ -120,13 +122,14 @@ end;
 function Channel_ConnectDll(pLang:Pointer):Integer;
 begin
 
-  Result:= InitDescriptionsArray(pLang);;
+  Result:= InitDescriptionsArray(pLang);
   if (Result <> RET_OK) then
       Exit;
   HasConected := True;
   SettingsManager := TChanSettingsManager.create();
   Result := SettingsManager.RefreshProfilsArray();
 
+  ExchangeManager := TModemManager.Create;
 end;
 
 procedure DLLEntryPoint(Reason: DWORD);
@@ -134,15 +137,14 @@ begin
 	case Reason of
 		DLL_PROCESS_ATTACH:
    	begin
-    HasConected := False;
-     //OutSwapDescriptions();
-
+      HasConected := False;
+      OutSwapDescriptions();
    	end;
+
 		DLL_PROCESS_DETACH:
    	begin
-    if SettingsManager <> Nil then
-      SettingsManager.Destroy;
-
+      if SettingsManager <> Nil then
+          SettingsManager.Destroy;
     end;
   end;
 end;

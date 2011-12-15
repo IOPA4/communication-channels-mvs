@@ -134,7 +134,9 @@ begin
   if (Result <> RET_OK) then
       Exit;
 
-  SettingsManager := TChanSettingsManager.create();
+  if  (SettingsManager = Nil) then
+      SettingsManager := TChanSettingsManager.create();
+
   Result := SettingsManager.RefreshProfilsArray();
 
 end;

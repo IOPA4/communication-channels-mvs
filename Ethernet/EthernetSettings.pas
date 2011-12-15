@@ -34,7 +34,6 @@ type
     lbPort: TLabel;
     edPort: TEdit;
     gbProfiles: TGroupBox;
-    cbProfiles: TComboBox;
     gbExchangeSettings: TGroupBox;
     edPortRetry: TEdit;
     edPortDeleyWaitAnswer: TEdit;
@@ -46,11 +45,13 @@ type
     btDelProf: TButton;
     btChangeProf: TButton;
     edIP: TEdit;
+    cbProfiles: TComboBox;
     procedure tbCancelClick(Sender: TObject);
     procedure btCreateProfClick(Sender: TObject);
     procedure btChangeProfClick(Sender: TObject);
     procedure btDelProfClick(Sender: TObject);
     procedure cbProfilesSelect(Sender: TObject);
+    procedure btOkClick(Sender: TObject);
   private
   public
 
@@ -79,6 +80,7 @@ type
 
       m_fSettings: TForm2;
       constructor create;
+      destructor destroy;
 
       property FLibSettings:TChannelSettings
         read m_LibSettings
@@ -176,6 +178,11 @@ begin
     end;
 end;
 
+destructor TChanSettingsManager.destroy;
+begin
+   if (m_fSettings <> Nil) then
+       m_fSettings.Destroy;
+end;
 //------------------------------------------------------------------------------
 procedure TChanSettingsManager.RefreshWindow(Index:Integer);
 begin
@@ -602,6 +609,11 @@ function TChanSettingsManager.ModifySettingsFile(
      if OkPressed then
        OwnerModifySettingsSet(ChannelSettings, TModifyProfType.DELETE_PROFILE);
   end;
+
+procedure TForm2.btOkClick(Sender: TObject);
+begin
+   Self.Close();
+end;
 
 //------------------------------------------------------------------------------
   procedure TForm2.cbProfilesSelect(Sender: TObject);

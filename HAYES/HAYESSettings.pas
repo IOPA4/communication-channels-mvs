@@ -64,6 +64,7 @@ type
     procedure btCreateProfClick(Sender: TObject);
     procedure btDelProfClick(Sender: TObject);
     procedure cbProfilesSelect(Sender: TObject);
+    procedure btOkClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -693,6 +694,11 @@ begin
        OwnerModifySettingsSet(ChannelSettings, TModifyProfType.DELETE_PROFILE);
 
 end;
+procedure TfSettings.btOkClick(Sender: TObject);
+begin
+
+end;
+
 //------------------------------------------------------------------------------
 procedure TfSettings.cbProfilesSelect(Sender: TObject);
 begin

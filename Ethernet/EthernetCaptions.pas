@@ -85,10 +85,10 @@ var
   HexNum:string;
 begin
   Result := RET_ERR;
-//  IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
-//            'Ethernet_' + string(pLang) + ".lng");
-   IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
-            'Ethernet_rus.lng');
+  //IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
+  //          'Ethernet_' + string(pLang) + '.lng');
+   IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) +
+             'Language\'+ 'Ethernet_rus.lng');
    if (IniFile <> nil) then
    begin
     for i := 0 to Integer(TDescriptionID.DESC_N) - 1  do
@@ -98,6 +98,8 @@ begin
     end;
       Result := RET_OK;
    end;
+
+   IniFile.Destroy;
 end;
 
 //------------------------------------------------------------------------------
@@ -110,6 +112,7 @@ var
 begin
     IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+
             'Ethernet_rus.lng');
+
    if (IniFile <> nil) then
    begin
     for i := 0 to Integer(TDescriptionID.DESC_N) - 1  do
@@ -119,6 +122,7 @@ begin
     end;
    end;
 
+    IniFile.Destroy;
 end;
 
 end.
