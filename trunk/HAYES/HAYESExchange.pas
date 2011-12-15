@@ -5,8 +5,10 @@ interface
 uses
   Windows,
   SysUtils,
-  HAYESSettings,
-  HAYESConstants;
+  SyncObjs,
+
+  HAYESConstants,
+  HAYESSettings;
 //------------------------------------------------------------------------------
 type
     TModemContext = record
@@ -30,7 +32,10 @@ type
       m_ChannelSettings:TChannelSettings;
       m_ModemContext:TModemContext;
       ara:array [0..Integer(TModemAnswer.MAS_N) - 1] of TModAnsw;
-
+      //--
+      m_Buf:array[0..BUF_MAX_LEN] of Byte;
+      m_LastBlockSize:Integer;
+      m_csExchenge:TCriticalSection;
       //--
       function ModemAnswerCode(buf:PByte):TModemAnswer;
       function m_SendATCommand (Cmd:PAnsiChar; TimeOut:Integer;
@@ -38,6 +43,7 @@ type
       function m_SendATCommand (Cmd:PAnsiChar; TimeOut:Integer):TModemAnswer; Overload;
       function m_SendATCommand (Cmd:PAnsiChar):TModemAnswer; Overload;
       //--
+
       function PurgeRX():Boolean;
       function WriteCOM(pBuf:PByte; Length:Integer; var Written:Integer):Boolean;
       function ReadCOM(pBuf:PByte; BytesToRead:Integer):Integer;
@@ -50,10 +56,18 @@ type
         destructor Destroy;
 
         function InitObject(Settings:TChannelSettings):Integer;
+
+        //function Open(Settings:TChannelSettings):Integer;
+        //function WriteBlock(pBlock:Pointer; BlockSize:Word):Integer;
+
+        //function ReadBlock(pBlock:Pointer; var Count:Word; MaxBlockSize:Word):Integer;
+        //function IsActive():Boolean;
+
     end;
 //------------------------------------------------------------------------------
 
-
+var
+  ExchangeManager:TModemManager;
 implementation
 //------------------------------------------------------------------------------
 constructor TModemManager.Create();
@@ -97,10 +111,12 @@ begin
 
    if hPort = INVALID_HANDLE_VALUE then
     Result :=  RET_ERR;
+
  except
    hPort := INVALID_HANDLE_VALUE;
    Result := RET_ERR;
  end;
+
 end;
 
 //------------------------------------------------------------------------------

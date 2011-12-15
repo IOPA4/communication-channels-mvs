@@ -44,6 +44,8 @@ interface
     );
 
 const
+
+  BUF_MAX_LEN = 8191;
   NameDll = 'HAYES';
 
 //errors

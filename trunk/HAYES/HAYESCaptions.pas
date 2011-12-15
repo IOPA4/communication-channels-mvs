@@ -205,7 +205,7 @@ begin
       Descriptions[i] := IniFile.ReadString('Captions', HexNum, HexNum);
     end;
 
-    for i := 0 to Integer(TDescriptionID.DESC_N) - 1  do
+    for i := 0 to Integer(TErrorID.ERRORS_N) - 1  do
     begin
       HexNum :=  '$'+Format('%.2x',[i]);
       ErrorDescriptions[i] := IniFile.ReadString('Errors', HexNum, HexNum);
