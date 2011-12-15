@@ -2,31 +2,37 @@ object SDIAppForm: TSDIAppForm
   Left = 197
   Top = 111
   Caption = 'SDI Application'
-  ClientHeight = 185
-  ClientWidth = 350
+  ClientHeight = 245
+  ClientWidth = 718
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -16
+  Font.Height = -13
   Font.Name = 'System'
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
-  PixelsPerInch = 120
-  TextHeight = 20
+  PixelsPerInch = 96
+  TextHeight = 16
   object StatusBar: TStatusBar
     Left = 0
-    Top = 166
-    Width = 350
+    Top = 226
+    Width = 718
     Height = 19
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
     AutoHint = True
     Panels = <>
     SimplePanel = True
+    ExplicitTop = 129
+    ExplicitWidth = 280
   end
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 350
+    Width = 718
     Height = 30
     BorderWidth = 1
     Color = clBtnFace
@@ -37,6 +43,7 @@ object SDIAppForm: TSDIAppForm
     ShowHint = True
     TabOrder = 1
     Wrapable = False
+    ExplicitWidth = 280
     object ToolButton9: TToolButton
       Left = 5
       Top = 0
@@ -76,10 +83,19 @@ object SDIAppForm: TSDIAppForm
       Action = EditPaste1
     end
   end
+  object btConnect: TButton
+    Left = 8
+    Top = 36
+    Width = 75
+    Height = 25
+    Caption = 'Connect'
+    TabOrder = 2
+    OnClick = btConnectClick
+  end
   object MainMenu1: TMainMenu
     Images = ImageList1
     Left = 8
-    Top = 152
+    Top = 176
     object File1: TMenuItem
       Caption = '&File'
       Hint = 'File related commands'
@@ -126,7 +142,7 @@ object SDIAppForm: TSDIAppForm
   object ActionList1: TActionList
     Images = ImageList1
     Left = 40
-    Top = 152
+    Top = 176
     object FileNew1: TAction
       Category = 'File'
       Caption = '&New'
@@ -195,7 +211,7 @@ object SDIAppForm: TSDIAppForm
   end
   object ImageList1: TImageList
     Left = 72
-    Top = 152
+    Top = 176
     Bitmap = {
       494C01010F001300140010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000004000000001002000000000000040
@@ -735,15 +751,15 @@ object SDIAppForm: TSDIAppForm
   object OpenDialog: TOpenDialog
     Filter = 'All Files (*.*)|*.*'
     Left = 104
-    Top = 152
+    Top = 176
   end
   object SaveDialog: TSaveDialog
     Filter = 'All Files (*.*)|*.*'
     Left = 136
-    Top = 152
+    Top = 176
   end
   object dlgOpenFile: TOpenDialog
     Left = 168
-    Top = 152
+    Top = 176
   end
 end

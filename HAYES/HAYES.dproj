@@ -54,6 +54,10 @@
 			<DCCReference Include="HAYESAddProfileSettings.pas">
 				<Form>fNewProfile</Form>
 			</DCCReference>
+			<None Include="ModelSupport_HAYES\default.txaPackage"/>
+			<None Include="ModelSupport_HAYES\default.txvpck"/>
+			<None Include="ModelSupport_HAYES\HAYESExchange\default.txvpck"/>
+			<None Include="ModelSupport_HAYES\HAYES\default.txvpck"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -109,6 +113,7 @@
 						<Source Name="MainSource">HAYES.dpr</Source>
 					</Source>
 				</Delphi.Personality>
+				<ModelSupport>True</ModelSupport>
 			</BorlandProject>
 			<ProjectFileVersion>12</ProjectFileVersion>
 		</ProjectExtensions>
