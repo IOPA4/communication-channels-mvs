@@ -19,7 +19,8 @@ uses
   EthernetSettings in 'EthernetSettings.pas' {Form2},
   EthernetConstants in 'EthernetConstants.pas',
   EthernetCaptions in 'EthernetCaptions.pas',
-  AddProfileSettings in 'AddProfileSettings.pas' {fNewProfile};
+  AddProfileSettings in 'AddProfileSettings.pas' {fNewProfile},
+  uLog in 'uLog.pas';
 
 {$R *.res}
 var
@@ -27,7 +28,7 @@ var
   Temp:Integer;
 
 //------------------------------------------------------------------------------
-function Channel_ShowWindow():Integer;
+function Channel_ShowWindow():Integer;  stdcall;
 begin
  Result:=RET_ERR;
 //  if pLangList=NIL then Exit;
@@ -58,18 +59,27 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function Channel_Open(ProfileName:PChar):Integer;
-
+function Channel_Open(ProfileName:PChar):Integer;  stdcall;
+var
+  Settings:TChannelSettings;
 begin
   try
-    Result := SocketWorker.Open();
+  ProfileName := PChar('CE805');
+    if (SettingsManager.GetProfileByName(String(ProfileName), Settings) <> RET_OK) then
+    begin
+      Result := RET_ERR;
+      Exit;
+    end;
+
+    Result := SocketWorker.Open(Settings);
+
   except
     Result := RET_ERR;
   end;
 end;
 
 //------------------------------------------------------------------------------
-function Channel_Close():Integer;
+function Channel_Close():Integer;   stdcall;
 begin
 
   try
@@ -80,7 +90,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function Channel_Write(pBlock:Pointer;Count:Word):Integer;
+function Channel_Write(pBlock:Pointer;Count:Word):Integer; stdcall;
 begin
   try
     Result := SocketWorker.WriteBlock(pBlock, Count);
@@ -90,10 +100,11 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function Channel_Read(pBlock:Pointer; var Count:Word):Integer;
+function Channel_Read(pBlock:Pointer; var Count:Word):Integer; stdcall;
 begin
   try
-    Result := SocketWorker.ReadBlock(pBlock, Count, 1024);
+   Result := SocketWorker.ReadBlock(pBlock, Count, 1024);
+
   except
     Result := RET_ERR;
   end;
@@ -116,7 +127,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function Channel_ConnectDll(pLang:Pointer):Integer;
+function Channel_ConnectDll(pLang:Pointer):Integer;stdcall;
 begin
   Result:= InitDescriptionsArray(pLang);;
 

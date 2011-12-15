@@ -85,7 +85,8 @@ type
         write SetSettings;
 
       procedure ShowWindow();
-
+      function GetProfileByName(ProfileName:String;
+               var Settings:TChannelSettings):integer;
       function GetProfilesCount(var Count:Integer):Integer;
       function GetProfilesName(N:Integer; var ProfileName:PChar):Integer;
       function RefreshProfilsArray():Integer;
@@ -393,7 +394,30 @@ function TChanSettingsManager.RefreshProfilsArray():Integer;
        CloseSettingsFile;
      end;
   end;
+//------------------------------------------------------------------------------
+function TChanSettingsManager.GetProfileByName(ProfileName:String;
+        var Settings:TChannelSettings):Integer;
+var
+  i:Integer;
+begin
 
+     if (RefreshProfilsArray() <> RET_OK) then
+     begin
+        Result := RET_ERR;
+        Exit;
+     end;
+
+     Result := RET_ERR;
+     for i := 0 to m_ProfilsListSize do
+     begin
+        if (ProfileName = m_Profils[i].ProfilName) then
+        begin
+          Settings := m_Profils[i];
+          Result := RET_OK;
+          Break;
+        end;
+     end;
+end;
 //------------------------------------------------------------------------------
 procedure TChanSettingsManager.ShowWindow();
 var
@@ -507,7 +531,9 @@ function TChanSettingsManager.ModifySettingsFile(
 
   end;
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 //                  TForm2 implementation
+//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
   procedure TForm2.FillSettingsOfWindow(var ChannelSettings:TChannelSettings);
   begin
@@ -588,5 +614,5 @@ function TChanSettingsManager.ModifySettingsFile(
   begin
      Self.Close();
   end;
-
+//------------------------------------------------------------------------------
 end.

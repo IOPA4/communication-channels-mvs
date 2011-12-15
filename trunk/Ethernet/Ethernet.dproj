@@ -54,6 +54,7 @@
 			<DCCReference Include="AddProfileSettings.pas">
 				<Form>fNewProfile</Form>
 			</DCCReference>
+			<DCCReference Include="uLog.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -76,7 +77,7 @@
 						<Parameters Name="UseLauncher">False</Parameters>
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
-						<Parameters Name="HostApplication">D:\Progect\comm_channels\communication-channels-mvs\Test\SDIAPP.exe</Parameters>
+						<Parameters Name="HostApplication">E:\svn_n\AdminTools\trunk\release\x86\AdminTools.exe</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
@@ -109,6 +110,7 @@
 						<Source Name="MainSource">Ethernet.dpr</Source>
 					</Source>
 					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\bin\dcloffice2k140.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
 						<Excluded_Packages Name="$(BDS)\bin\dclofficexp140.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
 					</Excluded_Packages>
 				</Delphi.Personality>
