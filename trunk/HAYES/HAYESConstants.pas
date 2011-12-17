@@ -106,50 +106,50 @@ const
 
   //AT commands list
 
-    AT            = 'AT\x0D';
-	  ATH           = 'ATH\x0D';
-	  ATH0          = 'ATH0\x0D';
-    ATQ0          = 'ATQ0\x0D';
-    ATV1          = 'ATV1\x0D';
-    ATE0          = 'ATE0\x0D';
-	  ATE1          = 'ATE1\x0D';
-	  ATQ0V1        = 'ATQ0V1\x0D';
-	  ATM0          = 'ATM0\x0D';
-	  ATM1          = 'ATM1\x0D';
-	  ATL           = 'ATL%d\x0D';
-	  ATX3          = 'ATX3\x0D';
-	  ATX4          = 'ATX4\x0D';
-	  ATS           = 'ATS%d=%d\x0D';
-	  ATslQ0        = 'AT\\Q0\x0D';
-	  ATslQ2        = 'AT\\Q2\x0D';
-	  ATplMR0       = 'AT+MR=0\x0D';
-	  ATplER0       = 'AT+ER=0\x0D';
-	  ATplDR0       = 'AT+DR=0\x0D';
-	  ATplIPR       = 'AT+IPR=%d\x0D';
-	  ATampD0       = 'AT&D0\x0D';
-	  ATampD2       = 'AT&D2\x0D';
-	  ATampC1       = 'AT&C1\x0D';
-	  ATampS1       = 'AT&S1\x0D';
-	  ATampF        = 'AT&F\x0D';
-	  ATampK0       = 'AT&K0\x0D';
-	  ATampK3       = 'AT&K3\x0D';
+    AT            = 'AT';
+	  ATH           = 'ATH';
+	  ATH0          = 'ATH0';
+    ATQ0          = 'ATQ0';
+    ATV1          = 'ATV1';
+    ATE0          = 'ATE0';
+	  ATE1          = 'ATE1';
+	  ATQ0V1        = 'ATQ0V1';
+	  ATM0          = 'ATM0';
+	  ATM1          = 'ATM1';
+	  ATL           = 'ATL%d';
+	  ATX3          = 'ATX3';
+	  ATX4          = 'ATX4';
+	  ATS           = 'ATS';
+	  ATslQ0        = 'AT\Q0';
+	  ATslQ2        = 'AT\Q2';
+	  ATplMR0       = 'AT+MR=0';
+	  ATplER0       = 'AT+ER=0';
+	  ATplDR0       = 'AT+DR=0';
+	  ATplIPR       = 'AT+IPR=';
+	  ATampD0       = 'AT&D0';
+	  ATampD2       = 'AT&D2';
+	  ATampC1       = 'AT&C1';
+	  ATampS1       = 'AT&S1';
+	  ATampF        = 'AT&F';
+	  ATampK0       = 'AT&K0';
+	  ATampK3       = 'AT&K3';
 	  PlPlPl        = '+++';
-	  ATplIFC00     = 'AT+IFC=0,0\x0D';
-	  ATplIFC02     = 'AT+IFC=0,2\x0D';
-	  ATcapSPBD_BL  = 'AT^SPBD=BL\x0D';
-	  AT_CFUN       = 'AT+CFUN=%d\x0D';
+	  ATplIFC00     = 'AT+IFC=0,0';
+	  ATplIFC02     = 'AT+IFC=0,2';
+	  ATcapSPBD_BL  = 'AT^SPBD=BL';
+	  AT_CFUN       = 'AT+CFUN=';
 
 
     //Modem Answer
-    cOK          = 'OK\x0D\x0A';
-    cCONNECT     = 'CONNECT\x0D\x0A';
-    cRING        = 'RING\x0D\x0A';
-    cNO_CARRIER  = 'NO CARRIER\x0D\x0A';
-    cERROR       = 'ERROR\x0D\x0A';
-    cNO_DIALTONE = 'NO DIALTONE\x0D\x0A';
-    cBUSY        = 'BUSY\x0D\x0A';
-    cNO_ANSWER   = 'NO ANSWER\x0D\x0A';
-    cCONNECT_t   = 'CONNECT\xFF\x0D\x0A';
+    cOK          = 'OK';
+    cCONNECT     = 'CONNECT';
+    cRING        = 'RING';
+    cNO_CARRIER  = 'NO CARRIER';
+    cERROR       = 'ERROR';
+    cNO_DIALTONE = 'NO DIALTONE';
+    cBUSY        = 'BUSY';
+    cNO_ANSWER   = 'NO ANSWER';
+    cCONNECT_t   = 'CONNECT';
 
     MODEM_ANSWER_TIMEOUT = 1000;
 

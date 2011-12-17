@@ -101,6 +101,8 @@ type
 
       function GetProfilesCount(var Count:Integer):Integer;
       function GetProfilesName(N:Integer; var ProfileName:PChar):Integer;
+      function GetProfileByName(ProfileName:String;
+                                var Settings:TChannelSettings):Integer;
       function RefreshProfilsArray():Integer;
       function OpenSettingsFile():Boolean;
       function ModifySettingsSet(ChannelSettings:TChannelSettings;
@@ -443,19 +445,19 @@ function TChanSettingsManager.RefreshProfilsArray():Integer;
                   begin
 
                    m_Profils[Index].ProfilName    := Name;
-                   m_Profils[0].PhoneNumber       := m_IniFile.ReadString(
-                    Lines[i], KEYNAME_PHONE_NUMBER, DEFVAL_PHONE_NUMBER);
-                   m_Profils[0].ComNumber         := m_IniFile.ReadString(
+                   m_Profils[Index].PhoneNumber       := m_IniFile.ReadString(
+                    Lines[Index], KEYNAME_PHONE_NUMBER, DEFVAL_PHONE_NUMBER);
+                   m_Profils[Index].ComNumber         := m_IniFile.ReadString(
                     Lines[i], KEYNAME_COM_NUMBER, DEFVAL_COM_NUMBER);
-                   m_Profils[0].BaudRateIndex     := m_IniFile.ReadInteger(
+                   m_Profils[Index].BaudRateIndex     := m_IniFile.ReadInteger(
                     Lines[i], KEYNAME_BAUD_RATE_INDEX, DEFVAL_BAUD_RATE_INDEX);
                   //
-                   m_Profils[0].InactiveTimeout   := m_IniFile.ReadInteger(
+                   m_Profils[Index].InactiveTimeout   := m_IniFile.ReadInteger(
                     Lines[i], KEYNAME_INACTIVE_TIMEOUT,
                     DEFVAL_INACTIVE_TIMEOUT);
-                   m_Profils[0].IsWaitTone        := m_IniFile.ReadBool(
+                   m_Profils[Index].IsWaitTone        := m_IniFile.ReadBool(
                     Lines[i], KEYNAME_IS_WAIT_TONE, DEFVAL_IS_WAIT_TONE);
-                   m_Profils[0].IsTone            := m_IniFile.ReadBool(
+                   m_Profils[Index].IsTone            := m_IniFile.ReadBool(
                    Lines[i], KEYNAME_IS_TONE, DEFVAL_IS_WAIT_TONE);
                   //
                    m_Profils[Index].Delay         := m_IniFile.ReadInteger(
@@ -620,6 +622,31 @@ function TChanSettingsManager.ModifySettingsFile(
     end;
 
   end;
+
+//------------------------------------------------------------------------------
+function TChanSettingsManager.GetProfileByName(ProfileName:String;
+        var Settings:TChannelSettings):Integer;
+var
+  i:Integer;
+begin
+
+     if (RefreshProfilsArray() <> RET_OK) then
+     begin
+        Result := RET_ERR;
+        Exit;
+     end;
+
+     Result := RET_ERR;
+     for i := 0 to m_ProfilsListSize do
+     begin
+        if (ProfileName = m_Profils[i].ProfilName) then
+        begin
+          Settings := m_Profils[i];
+          Result := RET_OK;
+          Break;
+        end;
+     end;
+end;
 //------------------------------------------------------------------------------
 //                    TfSettings implementation
 //------------------------------------------------------------------------------
