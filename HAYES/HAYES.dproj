@@ -59,6 +59,10 @@
 			<None Include="ModelSupport_HAYES\default.txvpck"/>
 			<None Include="ModelSupport_HAYES\HAYESExchange\default.txvpck"/>
 			<None Include="ModelSupport_HAYES\HAYES\default.txvpck"/>
+			<None Include="ModelSupport_HAYES\ComPort\default.txvpck"/>
+			<None Include="ModelSupport_HAYES\ComPort\default.txaPackage"/>
+			<None Include="ModelSupport_HAYES\HAYES\default.txaPackage"/>
+			<None Include="ModelSupport_HAYES\HAYESSettings\default.txaPackage"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
