@@ -59,12 +59,35 @@ begin
   Result:=RET_OK;
 end;
 
-function Channel_Open(ProfileName:PChar):Integer;
 
+
+function Channel_Open(ProfileName:PChar):Integer;
+var
+  Settings:TChannelSettings;
+  buf:Array [1..100] of Byte;
+  ATbuf:Array [1..100] of Byte;
+  Len:Integer;
 begin
   try
 
-    //Result := SocketWorker.Open();
+    ZeroMemory(@buf, sizeof(buf));
+    ZeroMemory(@ATbuf, sizeof(buf));
+
+
+    if (SettingsManager.GetProfileByName(String('test'), Settings) <> RET_OK) then
+    begin
+      Result := RET_ERR;
+      Exit;
+    end;
+    ExchangeManager.Open(Settings);
+    //для отладки
+//    if ComPortWorker.OpenCOM(Settings) = RET_OK then
+//    begin
+//      Len := MakeATCommandFoLowLayer(AT, @ATbuf);
+//      ComPortWorker.WriteCOM(@ATbuf, Len);
+//      ComPortWorker.ReadCOM(PByteArray(@buf), 100);
+//    end;
+
   except
     //Result := RET_ERR;
   end;
@@ -138,11 +161,15 @@ begin
 		DLL_PROCESS_ATTACH:
    	begin
       HasConected := False;
-      OutSwapDescriptions();
+      ExchangeManager := TModemManager.Create();
+      //OutSwapDescriptions();
    	end;
 
 		DLL_PROCESS_DETACH:
    	begin
+      if ExchangeManager <> Nil then
+          ExchangeManager.Destroy;
+
       if SettingsManager <> Nil then
           SettingsManager.Destroy;
     end;

@@ -401,6 +401,7 @@ function TChanSettingsManager.RefreshProfilsArray():Integer;
        CloseSettingsFile;
      end;
   end;
+
 //------------------------------------------------------------------------------
 function TChanSettingsManager.GetProfileByName(ProfileName:String;
         var Settings:TChannelSettings):Integer;

@@ -64,7 +64,7 @@ var
   Settings:TChannelSettings;
 begin
   try
-  ProfileName := PChar('CE805');
+
     if (SettingsManager.GetProfileByName(String(ProfileName), Settings) <> RET_OK) then
     begin
       Result := RET_ERR;

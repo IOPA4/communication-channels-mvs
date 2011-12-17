@@ -2,27 +2,23 @@ object SDIAppForm: TSDIAppForm
   Left = 197
   Top = 111
   Caption = 'SDI Application'
-  ClientHeight = 245
-  ClientWidth = 718
+  ClientHeight = 306
+  ClientWidth = 898
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -16
   Font.Name = 'System'
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
-  PixelsPerInch = 96
-  TextHeight = 16
+  PixelsPerInch = 120
+  TextHeight = 20
   object StatusBar: TStatusBar
     Left = 0
-    Top = 226
-    Width = 718
+    Top = 287
+    Width = 898
     Height = 19
-    Margins.Left = 2
-    Margins.Top = 2
-    Margins.Right = 2
-    Margins.Bottom = 2
     AutoHint = True
     Panels = <>
     SimplePanel = True
@@ -30,7 +26,7 @@ object SDIAppForm: TSDIAppForm
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 718
+    Width = 898
     Height = 30
     BorderWidth = 1
     Color = clBtnFace
@@ -201,7 +197,7 @@ object SDIAppForm: TSDIAppForm
     Left = 72
     Top = 176
     Bitmap = {
-      494C01010F001300140010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010F001300180010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000004000000001002000000000000040
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

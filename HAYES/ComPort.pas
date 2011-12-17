@@ -8,14 +8,36 @@ uses
    HAYESConstants,
    HAYESSettings;
 
+type
+    TComPortWorker = class
+      private
+            hPort: THandle;
+            buf: array[1..100] of byte;
+            function ClrDTR():Integer;
+            function SetDTR():Integer;
+
+            function GetCOMStatus(var Flags:DWord):Integer;
+            function GetCOMProp(var Cp:COMMPROP):Integer;
+
+
+      public
+          function OpenCOM(Settings:TChannelSettings):Integer;
+          function CloseCOM():Integer;
+          function GetStateCOM():Boolean;
+          function PurgeRX():Integer;
+          function WriteCOM(pBlock:PByteArray; BlockSize:Word):Integer;
+          function ReadCOM(pBlock:PByteArray; BlockSize:Integer;
+                           var Readed:Integer):Integer;
+          function SetHWFlowControl(IsHWFC:Boolean):Integer;
+    end;
 
 var
-  hPort: THandle;
+  ComPortWorker:TComPortWorker;
 
 implementation
 
 //------------------------------------------------------------------------------
-function OpenCOM(Settings:TChannelSettings):Integer;
+function TComPortWorker.OpenCOM(Settings:TChannelSettings):Integer;
 var
   s:string;
   ct:TCOMMTIMEOUTS;
@@ -25,7 +47,7 @@ var
 begin
 
   //TO DO проверка порта на корректность
-  s := string(Copy(Settings.ComNumber, 3, StrLen(PAnsiChar(Settings.ComNumber))-3));
+  s := string(Copy(Settings.ComNumber, 4, Length(Settings.ComNumber) - 3));
   tmp := StrToInt(s);
 
   if (tmp < 10) then
@@ -91,10 +113,12 @@ begin
     Result := RET_ERR;
     Exit;
   end;
+
+  Result := RET_OK;
 end;
 
 //------------------------------------------------------------------------------
-function CloseCOM():Integer;
+function TComPortWorker.CloseCOM():Integer;
 begin
 
 	if (CloseHandle(hPort) = False) then
@@ -107,7 +131,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function GetStateCOM():Boolean;
+function TComPortWorker.GetStateCOM():Boolean;
 begin
   Result := False;
 
@@ -118,7 +142,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function WriteCOM(pBlock:PByteArray; BlockSize:Word):Integer;
+function TComPortWorker.WriteCOM(pBlock:PByteArray; BlockSize:Word):Integer;
 var
 	Written, w: DWord;
 begin
@@ -155,32 +179,40 @@ begin
 
 		Written := Written + w;
 
-  until Written < BlockSize;
+  until Written <= BlockSize;
 
   Result := RET_OK;
 end;
 
 //------------------------------------------------------------------------------
-function ReadCOM(pBlock:PByteArray; BlockSize:Integer):Integer;
+function TComPortWorker.ReadCOM(pBlock:PByteArray; BlockSize:Integer;
+                                 var Readed:Integer):Integer;
 var
 	r:Cardinal;
+
 begin
 
 	Assert(hPort <> INVALID_HANDLE_VALUE, 'Bad handle of com port in function ReadCOM');
-
+  ZeroMemory(@buf, sizeof(buf));
   Result := RET_OK;
 
-	if (ReadFile(hPort, pBlock, BlockSize, r, Nil) = False)  then
+	if (ReadFile(hPort, buf, BlockSize, r, Nil) = False)  then
 	begin
 			//ThIdDPRINT(TEXT(__FUNCTION__) L" ReadFile fail\r\n");
 			Result := RET_ERR;
+      Readed := 0;
       Exit;
 	end;
+
+  CopyMemory(pBlock, @buf, r);
+  Readed := r;
+
+
 
 end;
 
 //------------------------------------------------------------------------------
-function ClrDTR():Integer;
+function TComPortWorker.ClrDTR():Integer;
 begin
 
 	Assert(hPort <> INVALID_HANDLE_VALUE, 'Bad handle of com port in function ClrDTR');
@@ -197,7 +229,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function SetDTR():Integer;
+function TComPortWorker.SetDTR():Integer;
 begin
 
 	Assert(hPort <> INVALID_HANDLE_VALUE, 'Bad handle of com port in function SetDTR');
@@ -214,7 +246,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function PurgeRX():Integer;
+function TComPortWorker.PurgeRX():Integer;
 begin
 	Assert(hPort <> INVALID_HANDLE_VALUE, 'Bad handle of com port in function PurgeRX');
 
@@ -229,7 +261,7 @@ end;
 
 //------------------------------------------------------------------------------
 
-function GetCOMStatus(var Flags:DWord):Integer;
+function TComPortWorker.GetCOMStatus(var Flags:DWord):Integer;
 begin
   Assert(hPort <> INVALID_HANDLE_VALUE, 'Bad handle of com port in function GetCOMStatus');
 
@@ -243,7 +275,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function  GetCOMProp(var Cp:COMMPROP):Integer;
+function  TComPortWorker.GetCOMProp(var Cp:COMMPROP):Integer;
 begin
 
   Assert(hPort <> INVALID_HANDLE_VALUE, 'Bad handle of com port in function GetCOMProp');
@@ -256,5 +288,43 @@ begin
 	end;
 
 end;
+
+//------------------------------------------------------------------------------
+function TComPortWorker.SetHWFlowControl(IsHWFC:Boolean):Integer;
+var
+	dcb:TDCB;
+  tmp:Integer;
+begin
+
+  if (GetCommState(hPort, dcb) = False) then
+  begin
+    Result := RET_ERR;
+    Exit;
+  end;
+
+
+  if IsHWFC = True then
+  begin
+   dcb.Flags := dcb.Flags or EV_CTS;
+   dcb.Flags := dcb.Flags or RTS_CONTROL_HANDSHAKE;
+  end else
+    begin
+     tmp := not EV_CTS;
+     dcb.Flags := dcb.Flags and tmp;
+
+     tmp := not RTS_CONTROL_HANDSHAKE;
+     dcb.Flags := dcb.Flags and tmp;
+
+     dcb.Flags := dcb.Flags or RTS_CONTROL_ENABLE;
+    end;
+
+  if (SetCommState(hPort, dcb) = False) then
+  begin
+    Result := RET_ERR;
+    Exit;
+  end;
+end;
+
+
 
 end.

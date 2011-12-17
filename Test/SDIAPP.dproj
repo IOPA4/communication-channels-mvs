@@ -44,7 +44,7 @@
 			<DelphiCompile Include="SDIAPP.DPR">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
-			<DCCReference Include="SDIMAIN.pas">
+			<DCCReference Include="SDIMAIN.PAS">
 				<Form>SDIAppForm</Form>
 			</DCCReference>
 			<DCCReference Include="ABOUT.PAS">
