@@ -9,10 +9,10 @@
 			<Projects Include="Ethernet\Ethernet.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="Test\SDIAPP.dproj">
+			<Projects Include="HAYES\HAYES.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="HAYES\HAYES.dproj">
+			<Projects Include="Test\SDIAPP.dproj">
 				<Dependencies/>
 			</Projects>
 		</ItemGroup>
@@ -41,15 +41,6 @@
 		<Target Name="Ethernet:Make">
 			<MSBuild Targets="Make" Projects="Ethernet\Ethernet.dproj"/>
 		</Target>
-		<Target Name="SDIAPP">
-			<MSBuild Projects="Test\SDIAPP.dproj"/>
-		</Target>
-		<Target Name="SDIAPP:Clean">
-			<MSBuild Targets="Clean" Projects="Test\SDIAPP.dproj"/>
-		</Target>
-		<Target Name="SDIAPP:Make">
-			<MSBuild Targets="Make" Projects="Test\SDIAPP.dproj"/>
-		</Target>
 		<Target Name="HAYES">
 			<MSBuild Projects="HAYES\HAYES.dproj"/>
 		</Target>
@@ -59,14 +50,23 @@
 		<Target Name="HAYES:Make">
 			<MSBuild Targets="Make" Projects="HAYES\HAYES.dproj"/>
 		</Target>
+		<Target Name="SDIAPP">
+			<MSBuild Projects="Test\SDIAPP.dproj"/>
+		</Target>
+		<Target Name="SDIAPP:Clean">
+			<MSBuild Targets="Clean" Projects="Test\SDIAPP.dproj"/>
+		</Target>
+		<Target Name="SDIAPP:Make">
+			<MSBuild Targets="Make" Projects="Test\SDIAPP.dproj"/>
+		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="RS232;Ethernet;SDIAPP;HAYES"/>
+			<CallTarget Targets="RS232;Ethernet;HAYES;SDIAPP"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="RS232:Clean;Ethernet:Clean;SDIAPP:Clean;HAYES:Clean"/>
+			<CallTarget Targets="RS232:Clean;Ethernet:Clean;HAYES:Clean;SDIAPP:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="RS232:Make;Ethernet:Make;SDIAPP:Make;HAYES:Make"/>
+			<CallTarget Targets="RS232:Make;Ethernet:Make;HAYES:Make;SDIAPP:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>
