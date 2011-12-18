@@ -446,7 +446,7 @@ function TChanSettingsManager.RefreshProfilsArray():Integer;
 
                    m_Profils[Index].ProfilName    := Name;
                    m_Profils[Index].PhoneNumber       := m_IniFile.ReadString(
-                    Lines[Index], KEYNAME_PHONE_NUMBER, DEFVAL_PHONE_NUMBER);
+                    Lines[i], KEYNAME_PHONE_NUMBER, DEFVAL_PHONE_NUMBER);
                    m_Profils[Index].ComNumber         := m_IniFile.ReadString(
                     Lines[i], KEYNAME_COM_NUMBER, DEFVAL_COM_NUMBER);
                    m_Profils[Index].BaudRateIndex     := m_IniFile.ReadInteger(

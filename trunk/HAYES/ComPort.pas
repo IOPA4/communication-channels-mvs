@@ -29,6 +29,7 @@ type
           function ReadCOM(pBlock:PByteArray; BlockSize:Integer;
                            var Readed:Integer):Integer;
           function SetHWFlowControl(IsHWFC:Boolean):Integer;
+          function ResetDTR():Integer;
     end;
 
 var
@@ -57,7 +58,7 @@ begin
   	s := '\\\\.\\COM' +  IntToStr(tmp);
 
   hPort := CreateFile(PWideChar(s), GENERIC_READ or GENERIC_WRITE, 0, Nil, OPEN_EXISTING,
-		0, 0);
+		FILE_FLAG_OVERLAPPED, 0);
 
   if (hPort = INVALID_HANDLE_VALUE) then
   begin
@@ -325,6 +326,21 @@ begin
   end;
 end;
 
+//------------------------------------------------------------------------------
+function TComPortWorker.ResetDTR():Integer;
+begin
 
+  Assert(hPort <> INVALID_HANDLE_VALUE, 'Bad handle of com port in function ResetDTR');
+
+	if (EscapeCommFunction(hPort, CLRDTR) = False) then
+		  Result := RET_ERR;
+
+	Sleep(100);
+
+	if (EscapeCommFunction(hPort, SETDTR)  = False) then
+		 Result := RET_ERR;
+
+  Result := RET_OK;
+end;
 
 end.
