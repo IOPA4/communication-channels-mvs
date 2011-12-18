@@ -31,7 +31,7 @@ type
       m_Buf:array[0..BUF_MAX_LEN] of Byte;
       m_LastBlockSize:Integer;
 
-      m_csExchenge:TCriticalSection;
+      m_csExchange:TCriticalSection;
       procedure TryClose();
 
     public
@@ -68,7 +68,7 @@ begin
     m_ServerAddress.sin_family := AF_INET;
     m_Socket := INVALID_SOCKET;
     m_LastBlockSize := 0;
-    m_csExchenge := TCriticalSection.Create;
+    m_csExchange := TCriticalSection.Create;
     m_State := False;
 
 end;
@@ -84,7 +84,7 @@ Begin
       m_Socket := INVALID_SOCKET;
     end;
 
-    m_csExchenge.Destroy;
+    m_csExchange.Destroy;
     WSACleanup();
 
   finally
@@ -124,7 +124,7 @@ var
   Block:Integer;
 Begin
 try
-   m_csExchenge.Enter;
+    m_csExchange.Enter;
     Result := RET_ERR;
     //sLog ('C:\MyProgram.log','Open Begin');
 
@@ -153,7 +153,7 @@ try
 
 finally
     //sLog ('C:\MyProgram.log','Open End');
-    m_csExchenge.Leave;
+    m_csExchange.Leave;
 end;
 End;
 
@@ -163,7 +163,7 @@ var
   Block:Integer;
 Begin
 try
-   m_csExchenge.Enter;
+   m_csExchange.Enter;
    //sLog ('C:\MyProgram.log','Close Begin');
    Result := RET_ERR;
 
@@ -180,7 +180,7 @@ try
 
 finally
   //sLog ('C:\MyProgram.log','Close End');
-  m_csExchenge.Leave;
+  m_csExchange.Leave;
 end;
 
 End;
@@ -194,7 +194,7 @@ var
   ppp:Pointer;
 Begin
 try
-   m_csExchenge.Enter;
+   m_csExchange.Enter;
    Result := RET_ERR;
 
    ZeroMemory(@m_Buf[0], m_LastBlockSize);
@@ -213,7 +213,7 @@ try
     end;
 
  finally
-    m_csExchenge.Leave;
+    m_csExchange.Leave;
  end;
 End;
 
@@ -230,7 +230,7 @@ Begin
 try
 
   //Обеспечение потокозащищенности
-   m_csExchenge.Enter;
+   m_csExchange.Enter;
 
    FD_ZERO(FDSet);
    FD_SET(m_Socket, FDSet);
@@ -271,13 +271,14 @@ try
   end;
 
 finally
-  m_csExchenge.Leave;
+  m_csExchange.Leave;
 end;
 
 End;
 
 //------------------------------------------------------------------------------
 function TClientSocketWorker.IsActive():Boolean;
+
 Begin
    Result := False;
 

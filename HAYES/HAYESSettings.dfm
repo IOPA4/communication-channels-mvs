@@ -2,8 +2,8 @@ object fSettings: TfSettings
   Left = 0
   Top = 0
   Caption = 'Settings'
-  ClientHeight = 417
-  ClientWidth = 411
+  ClientHeight = 591
+  ClientWidth = 537
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,21 +12,21 @@ object fSettings: TfSettings
   Font.Style = []
   OldCreateOrder = False
   DesignSize = (
-    411
-    417)
+    537
+    591)
   PixelsPerInch = 120
   TextHeight = 16
   object gbProfiles: TGroupBox
-    Left = 3
-    Top = 299
-    Width = 405
-    Height = 73
+    Left = 8
+    Top = 453
+    Width = 532
+    Height = 74
     Anchors = [akLeft, akTop, akRight]
     Caption = #1055#1088#1086#1092#1080#1083#1080
     TabOrder = 0
     DesignSize = (
-      405
-      73)
+      532
+      74)
     object cbProfiles: TComboBox
       Left = 215
       Top = 11
@@ -37,7 +37,7 @@ object fSettings: TfSettings
       OnSelect = cbProfilesSelect
     end
     object btCreateProf: TButton
-      Left = 80
+      Left = 207
       Top = 39
       Width = 104
       Height = 32
@@ -47,7 +47,7 @@ object fSettings: TfSettings
       OnClick = btCreateProfClick
     end
     object btDelProf: TButton
-      Left = 297
+      Left = 424
       Top = 39
       Width = 107
       Height = 32
@@ -57,7 +57,7 @@ object fSettings: TfSettings
       OnClick = btDelProfClick
     end
     object btChangeProf: TButton
-      Left = 185
+      Left = 312
       Top = 39
       Width = 107
       Height = 32
@@ -68,28 +68,28 @@ object fSettings: TfSettings
     end
   end
   object tbCancel: TButton
-    Left = 187
-    Top = 377
+    Left = 313
+    Top = 551
     Width = 108
-    Height = 34
+    Height = 33
     Anchors = [akRight, akBottom]
     Caption = #1054#1090#1084#1077#1085#1072
     TabOrder = 1
   end
   object btOk: TButton
-    Left = 299
-    Top = 377
+    Left = 425
+    Top = 551
     Width = 108
-    Height = 34
+    Height = 33
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
     TabOrder = 2
     OnClick = btOkClick
   end
   object gbExchangeSettings: TGroupBox
-    Left = 4
-    Top = 207
-    Width = 404
+    Left = -3
+    Top = 350
+    Width = 531
     Height = 96
     Margins.Left = 4
     Margins.Top = 4
@@ -172,9 +172,9 @@ object fSettings: TfSettings
     end
   end
   object gbConnectionSettings: TGroupBox
-    Left = 4
-    Top = 121
-    Width = 404
+    Left = 8
+    Top = 201
+    Width = 531
     Height = 87
     Anchors = [akLeft, akTop, akRight]
     Caption = 'Connection Settings'
@@ -195,8 +195,8 @@ object fSettings: TfSettings
       TabOrder = 0
     end
     object cbWaitTone: TCheckBox
-      Left = 4
-      Top = 39
+      Left = 3
+      Top = 38
       Width = 261
       Height = 17
       Caption = 'Wait Tone'
@@ -214,34 +214,34 @@ object fSettings: TfSettings
   object gbPhoneNumber: TGroupBox
     Left = 3
     Top = 1
-    Width = 405
+    Width = 532
     Height = 50
     Anchors = [akLeft, akTop, akRight]
     Caption = 'Phone Number'
     TabOrder = 5
     DesignSize = (
-      405
+      532
       50)
     object edPhoneNumber: TEdit
       Left = 3
       Top = 16
-      Width = 390
+      Width = 517
       Height = 24
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
     end
   end
   object gbComPort: TGroupBox
-    Left = 3
+    Left = 8
     Top = 47
-    Width = 404
-    Height = 72
+    Width = 530
+    Height = 114
     Anchors = [akLeft, akTop, akRight]
     Caption = 'COM-port'
     TabOrder = 6
     DesignSize = (
-      404
-      72)
+      530
+      114)
     object lbPortName: TLabel
       Left = 5
       Top = 19
@@ -257,7 +257,7 @@ object fSettings: TfSettings
       Caption = 'Baud Rate'
     end
     object cbComPort: TComboBox
-      Left = 297
+      Left = 424
       Top = 13
       Width = 96
       Height = 24
@@ -266,7 +266,7 @@ object fSettings: TfSettings
       TabOrder = 0
     end
     object cbBaudRate: TComboBox
-      Left = 297
+      Left = 424
       Top = 43
       Width = 96
       Height = 24
