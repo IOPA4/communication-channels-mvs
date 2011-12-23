@@ -85,7 +85,8 @@ interface
     DESC_LABEL_COM,                 //'Последовательный порт'
     DESC_EXCHANGE_SETTINGS,         //'Настройки обмена',
     //6
-    DESC_MODEM_CONNECTION,         //'Модемное соединение'
+    DESC_MODEM_CONNECTION,          //'Модемное соединение'
+    DESC_ADD_INIT_PARS,             //'Дополнительные параметры инициализации'
 
     DESC_N
   );
@@ -140,7 +141,8 @@ interface
     'Подтвердите удаление профиля',
     'Последовательный порт',
     'Настройки обмена',
-    'Модемное соединение'
+    'Модемное соединение',
+    'Дополнительные параметры инициализации'
   );
 
   ErrorDescriptions: array [0..Integer(TErrorID.ERRORS_N) - 1] of String = (

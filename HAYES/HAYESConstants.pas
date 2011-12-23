@@ -69,6 +69,7 @@ const
   KEYNAME_DELAY_BEFORE      = 'PortDelayBeforeSend';
   KEYNAME_WAIT_ANSWER       = 'PortDeleyWaitAnswer';
   KEYNAME_RETRY_COUNT       = 'PortRetry';
+  KEYNAME_ADD_INIT_PARAMS   = 'AddInitParams';
 
   DEFVAL_PROFILE_NAME      = '000000';
   DEFVAL_PHONE_NUMBER      = '000000';
@@ -80,6 +81,7 @@ const
   DEFVAL_DELAY_BEFORE      = 0;
   DEFVAL_WAIT_ANSWER       = 0;
   DEFVAL_RETRY_COUNT       = 0;
+  DEFVAL_ADD_INIT_PARAMS   = '';
 
   BaudRate: array [0..Integer(TBaudRateID.BRID_N) - 1] of Integer = (
           300,         //'300'
