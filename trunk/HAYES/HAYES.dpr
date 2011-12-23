@@ -27,7 +27,7 @@ var
   SettingsManager:TChanSettingsManager;
   HasConected:Bool;  //Устанавливается True в Channel_ConnectDll
 
-function Channel_ShowWindow():Integer;
+function Channel_ShowWindow():Integer; stdcall;
 begin
  Result:=RET_ERR;
 
@@ -41,12 +41,12 @@ begin
 
 end;
 
-function Channel_SetSettings(ProfileName:String):Integer;
+function Channel_SetSettings(ProfileName:String):Integer; stdcall;
 begin
   //Result:=RET_OK;
 end;
 
-function Channel_GetSettings(var ChannelSettings: TChannelSettings):Integer;
+function Channel_GetSettings(var ChannelSettings: TChannelSettings):Integer;stdcall;
 begin
 
   Result:=RET_OK;
@@ -54,14 +54,14 @@ begin
 
 end;
 
-function Channel_GetStatus():Integer;
+function Channel_GetStatus():Integer;      stdcall;
 begin
   Result:=RET_OK;
 end;
 
 
 
-function Channel_Open(ProfileName:PChar):Integer;
+function Channel_Open(ProfileName:PChar):Integer; stdcall;
 var
   Settings:TChannelSettings;
   buf:Array [1..100] of Byte;
@@ -80,79 +80,72 @@ begin
       Exit;
     end;
     ExchangeManager.Open(Settings);
-    //для отладки
-//    if ComPortWorker.OpenCOM(Settings) = RET_OK then
-//    begin
-//      Len := MakeATCommandFoLowLayer(AT, @ATbuf);
-//      ComPortWorker.WriteCOM(@ATbuf, Len);
-//      ComPortWorker.ReadCOM(PByteArray(@buf), 100);
-//    end;
 
   except
-    //Result := RET_ERR;
+    Result := RET_ERR;
   end;
 end;
 
-function Channel_Close():Integer;
+function Channel_Close():Integer; stdcall;
 begin
 
   try
-    //Result := SocketWorker.Close();
-  except
-    //Result := RET_ERR;
-  end;
-
-
-end;
-
-function Channel_Write(pBlock:Pointer;Count:Word):Integer;
-begin
-
-  try
-    //Result := SocketWorker.WriteBlock(pBlock, Count);
-  except
-    //Result := RET_ERR;
-  end;
-
-end;
-
-function Channel_Read(pBlock:Pointer; var Count:Word):Integer;
-begin
-  try
-
-//    Result := SocketWorker.ReadBlock(pBlock, Count, 1024);
-
+    Result := ExchangeManager.Close();
   except
     Result := RET_ERR;
   end;
 
 end;
 
+function Channel_Write(pBlock:Pointer;Count:Word):Integer; stdcall;
+begin
+
+  try
+    Result := ExchangeManager.WriteBlock(pBlock, Count);
+  except
+    Result := RET_ERR;
+  end;
+
+end;
+
+function Channel_Read(pBlock:Pointer; var Count:Word):Integer;stdcall;
+begin
+  try
+
+   Result := ExchangeManager.ReadBlock(pBlock, Count, 1024);
+
+  except
+    Result := RET_ERR;
+  end;
+end;
+
 //
-function Channel_GetProfilesCount(var Count:Integer):Integer;
+function Channel_GetProfilesCount(var Count:Integer):Integer; stdcall;
 begin
 
   Result := SettingsManager.GetProfilesCount(Count);
+
 end;
 
-function Channel_GetProfilesName(N:Integer; var ProfileName:PChar):Integer;
+function Channel_GetProfilesName(N:Integer; var ProfileName:PChar):Integer; stdcall;
 begin
 
   Result:= SettingsManager.GetProfilesName(N, ProfileName);
 
 end;
 
-function Channel_ConnectDll(pLang:Pointer):Integer;
+function Channel_ConnectDll(pLang:Pointer):Integer; stdcall;
 begin
 
-  Result:= InitDescriptionsArray(pLang);
-  if (Result <> RET_OK) then
-      Exit;
+ Result:= InitDescriptionsArray(pLang);
+
+ if (Result <> RET_OK) then
+     Exit;
   HasConected := True;
+
   SettingsManager := TChanSettingsManager.create();
   Result := SettingsManager.RefreshProfilsArray();
 
-  ExchangeManager := TModemManager.Create;
 end;
 
 procedure DLLEntryPoint(Reason: DWORD);
@@ -162,7 +155,7 @@ begin
    	begin
       HasConected := False;
       ExchangeManager := TModemManager.Create();
-      //OutSwapDescriptions();
+      OutSwapDescriptions();
    	end;
 
 		DLL_PROCESS_DETACH:
@@ -177,6 +170,7 @@ begin
 end;
 
 exports
+
   Channel_ConnectDll,
   Channel_ShowWindow,
   Channel_SetSettings,
@@ -188,6 +182,7 @@ exports
   Channel_Read,
   Channel_GetProfilesCount,
   Channel_GetProfilesName;
+
 begin
 
   DllProc := @DLLEntryPoint;

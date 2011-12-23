@@ -2,274 +2,340 @@ object fSettings: TfSettings
   Left = 0
   Top = 0
   Caption = 'Settings'
-  ClientHeight = 591
-  ClientWidth = 537
+  ClientHeight = 443
+  ClientWidth = 403
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -13
+  Font.Height = -10
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
   DesignSize = (
-    537
-    591)
-  PixelsPerInch = 120
-  TextHeight = 16
+    403
+    443)
+  PixelsPerInch = 96
+  TextHeight = 12
   object gbProfiles: TGroupBox
-    Left = 8
-    Top = 453
-    Width = 532
-    Height = 74
+    Left = 2
+    Top = 319
+    Width = 399
+    Height = 61
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
     Anchors = [akLeft, akTop, akRight]
     Caption = #1055#1088#1086#1092#1080#1083#1080
     TabOrder = 0
     DesignSize = (
-      532
-      74)
+      399
+      61)
     object cbProfiles: TComboBox
-      Left = 215
-      Top = 11
-      Width = 184
-      Height = 24
+      Left = 211
+      Top = 12
+      Width = 187
+      Height = 20
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Style = csDropDownList
       TabOrder = 0
       OnSelect = cbProfilesSelect
     end
     object btCreateProf: TButton
-      Left = 207
-      Top = 39
-      Width = 104
-      Height = 32
+      Left = 155
+      Top = 35
+      Width = 78
+      Height = 24
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Anchors = [akRight, akBottom]
       Caption = #1057#1086#1079#1076#1072#1090#1100
       TabOrder = 1
       OnClick = btCreateProfClick
+      ExplicitTop = 29
     end
     object btDelProf: TButton
-      Left = 424
-      Top = 39
-      Width = 107
-      Height = 32
+      Left = 318
+      Top = 35
+      Width = 80
+      Height = 24
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Anchors = [akRight, akBottom]
       Caption = #1059#1076#1072#1083#1080#1090#1100
       TabOrder = 2
       OnClick = btDelProfClick
+      ExplicitTop = 29
     end
     object btChangeProf: TButton
-      Left = 312
-      Top = 39
-      Width = 107
-      Height = 32
+      Left = 234
+      Top = 35
+      Width = 80
+      Height = 24
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Anchors = [akRight, akBottom]
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100
       TabOrder = 3
       OnClick = btChangeProfClick
+      ExplicitTop = 29
     end
   end
   object tbCancel: TButton
-    Left = 313
-    Top = 551
-    Width = 108
-    Height = 33
+    Left = 235
+    Top = 413
+    Width = 81
+    Height = 25
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
     Anchors = [akRight, akBottom]
     Caption = #1054#1090#1084#1077#1085#1072
     TabOrder = 1
   end
   object btOk: TButton
-    Left = 425
-    Top = 551
-    Width = 108
-    Height = 33
+    Left = 319
+    Top = 413
+    Width = 81
+    Height = 25
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
     Anchors = [akRight, akBottom]
     Caption = 'Ok'
     TabOrder = 2
     OnClick = btOkClick
   end
   object gbExchangeSettings: TGroupBox
-    Left = -3
-    Top = 350
-    Width = 531
-    Height = 96
-    Margins.Left = 4
-    Margins.Top = 4
-    Margins.Right = 4
-    Margins.Bottom = 4
+    Left = 2
+    Top = 230
+    Width = 405
+    Height = 88
     Anchors = [akLeft, akTop, akRight]
     Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1072' '#1086#1073#1084#1077#1085#1072
     TabOrder = 3
     object lbPortDelayBeforeSend: TLabel
-      Left = 5
-      Top = 16
-      Width = 130
-      Height = 16
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
+      Left = 6
+      Top = 15
+      Width = 104
+      Height = 12
       Caption = 'lbPortDelayBeforeSend'
     end
     object lbPortDeleyWaitAnswer: TLabel
-      Left = 5
-      Top = 43
-      Width = 37
-      Height = 16
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
+      Left = 6
+      Top = 37
+      Width = 28
+      Height = 12
       Caption = 'Label1'
     end
     object lbRetry: TLabel
-      Left = 5
-      Top = 71
-      Width = 37
-      Height = 16
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
+      Left = 7
+      Top = 64
+      Width = 28
+      Height = 12
       Caption = 'Label1'
     end
     object edPortRetry: TEdit
-      Left = 219
-      Top = 67
-      Width = 182
-      Height = 24
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
+      Left = 214
+      Top = 61
+      Width = 187
+      Height = 23
       NumbersOnly = True
       TabOrder = 0
       Text = '1'
     end
     object edPortDeleyWaitAnswer: TEdit
-      Left = 220
-      Top = 40
-      Width = 183
-      Height = 24
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
+      Left = 215
+      Top = 34
+      Width = 187
+      Height = 23
       NumbersOnly = True
       TabOrder = 1
       Text = '500'
     end
     object edPortDelayBeforeSend: TEdit
-      Left = 219
-      Top = 13
-      Width = 182
-      Height = 24
-      Margins.Left = 4
-      Margins.Top = 4
-      Margins.Right = 4
-      Margins.Bottom = 4
+      Left = 215
+      Top = 7
+      Width = 187
+      Height = 23
       NumbersOnly = True
       TabOrder = 2
       Text = '60'
     end
   end
   object gbConnectionSettings: TGroupBox
-    Left = 8
-    Top = 201
-    Width = 531
-    Height = 87
+    Left = 4
+    Top = 104
+    Width = 399
+    Height = 127
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
     Anchors = [akLeft, akTop, akRight]
     Caption = 'Connection Settings'
     TabOrder = 4
     object lbInactiveTimeout: TLabel
-      Left = 4
-      Top = 16
-      Width = 156
-      Height = 16
+      Left = 3
+      Top = 15
+      Width = 125
+      Height = 12
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Caption = 'Break Connection Time Out'
     end
     object edInactiveTimeout: TEdit
-      Left = 295
-      Top = 16
-      Width = 96
-      Height = 24
+      Left = 209
+      Top = 12
+      Width = 187
+      Height = 23
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       NumbersOnly = True
       TabOrder = 0
     end
     object cbWaitTone: TCheckBox
-      Left = 3
-      Top = 38
-      Width = 261
-      Height = 17
+      Left = 2
+      Top = 34
+      Width = 203
+      Height = 12
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Caption = 'Wait Tone'
       TabOrder = 1
     end
     object cbToneType: TCheckBox
-      Left = 4
-      Top = 61
-      Width = 269
-      Height = 22
+      Left = 2
+      Top = 54
+      Width = 204
+      Height = 18
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Caption = 'Tone type of call'
       TabOrder = 2
     end
+    object gbAddParams: TGroupBox
+      Left = 3
+      Top = 73
+      Width = 392
+      Height = 49
+      Caption = 'Additional initialization parametrs'
+      TabOrder = 3
+      object edAddParams: TEdit
+        Left = 2
+        Top = 16
+        Width = 386
+        Height = 24
+        TabOrder = 0
+      end
+    end
   end
   object gbPhoneNumber: TGroupBox
-    Left = 3
+    Left = 2
     Top = 1
-    Width = 532
-    Height = 50
+    Width = 399
+    Height = 41
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
     Anchors = [akLeft, akTop, akRight]
     Caption = 'Phone Number'
     TabOrder = 5
     DesignSize = (
-      532
-      50)
+      399
+      41)
     object edPhoneNumber: TEdit
       Left = 3
-      Top = 16
-      Width = 517
-      Height = 24
+      Top = 12
+      Width = 391
+      Height = 23
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
     end
   end
   object gbComPort: TGroupBox
-    Left = 8
-    Top = 47
-    Width = 530
-    Height = 114
+    Left = 2
+    Top = 46
+    Width = 401
+    Height = 59
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
     Anchors = [akLeft, akTop, akRight]
     Caption = 'COM-port'
     TabOrder = 6
     DesignSize = (
-      530
-      114)
+      401
+      59)
     object lbPortName: TLabel
-      Left = 5
-      Top = 19
-      Width = 55
-      Height = 16
+      Left = 4
+      Top = 14
+      Width = 46
+      Height = 12
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Caption = 'COM-port'
     end
     object lbBaudRate: TLabel
-      Left = 5
-      Top = 47
-      Width = 58
-      Height = 16
+      Left = 4
+      Top = 35
+      Width = 45
+      Height = 12
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Caption = 'Baud Rate'
     end
     object cbComPort: TComboBox
-      Left = 424
-      Top = 13
-      Width = 96
-      Height = 24
+      Left = 211
+      Top = 10
+      Width = 187
+      Height = 20
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Style = csDropDownList
       Anchors = [akTop, akRight]
       TabOrder = 0
     end
     object cbBaudRate: TComboBox
-      Left = 424
-      Top = 43
-      Width = 96
-      Height = 24
+      Left = 211
+      Top = 34
+      Width = 187
+      Height = 20
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
       Style = csDropDownList
       Anchors = [akTop, akRight]
       TabOrder = 1

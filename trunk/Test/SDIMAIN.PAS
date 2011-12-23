@@ -126,6 +126,7 @@ begin
         //--
         fnChannelConnectDll(PChar('rus'));
         fnChannelOpen('test');
+        fnChannelClose();
         //fnChannelShowWindow();
         FreeLibrary(hDll);
      End;

@@ -17,6 +17,8 @@ type
       ProfilName:string;
       PhoneNumber:string;
       ComNumber:string;
+
+      AddInitParams:string;
       BaudRateIndex:Integer;
       //
       InactiveTimeout:Integer;
@@ -60,6 +62,8 @@ type
     lbPortName: TLabel;
     cbBaudRate: TComboBox;
     lbBaudRate: TLabel;
+    gbAddParams: TGroupBox;
+    edAddParams: TEdit;
     procedure btChangeProfClick(Sender: TObject);
     procedure btCreateProfClick(Sender: TObject);
     procedure btDelProfClick(Sender: TObject);
@@ -203,6 +207,9 @@ begin
           RET_OK then
           m_fSettings.btChangeProf.Caption := string(pc);
 
+        if GetDescription(Integer(TDescriptionID.DESC_ADD_INIT_PARS), pc) = RET_OK then
+          m_fSettings.gbAddParams.Caption := string(pc);
+
         if GetDescription(Integer(TDescriptionID.DESC_DELETE_PROFILE), pc) =
           RET_OK then
           m_fSettings.btDelProf.Caption := string(pc);
@@ -222,6 +229,7 @@ begin
         m_LibSettings.PhoneNumber     := DEFVAL_PHONE_NUMBER;
         m_LibSettings.ComNumber       := DEFVAL_COM_NUMBER;
         m_LibSettings.BaudRateIndex   := DEFVAL_BAUD_RATE_INDEX;
+        m_LibSettings.AddInitParams   := DEFVAL_ADD_INIT_PARAMS;
       //
         m_LibSettings.InactiveTimeout := DEFVAL_INACTIVE_TIMEOUT;
         m_LibSettings.IsWaitTone      := DEFVAL_IS_WAIT_TONE;
@@ -269,6 +277,7 @@ begin
               m_fSettings.cbComPort.ItemIndex := i;
 
           m_fSettings.cbBaudRate.ItemIndex := m_Profils[Index].BaudRateIndex;
+          m_fSettings.edAddParams.Text := m_Profils[Index].AddInitParams;
 
           m_fSettings.edInactiveTimeout.Text :=
             IntToStr(m_Profils[Index].InactiveTimeout);
@@ -410,7 +419,7 @@ function TChanSettingsManager.RefreshProfilsArray():Integer;
 
   begin
      try
-
+     m_ProfilsListSize := 0;
      Res := InternalGetProfilesCount(m_ProfilsListSize);
 
      if OpenSettingsFile() then
@@ -451,6 +460,9 @@ function TChanSettingsManager.RefreshProfilsArray():Integer;
                     Lines[i], KEYNAME_COM_NUMBER, DEFVAL_COM_NUMBER);
                    m_Profils[Index].BaudRateIndex     := m_IniFile.ReadInteger(
                     Lines[i], KEYNAME_BAUD_RATE_INDEX, DEFVAL_BAUD_RATE_INDEX);
+                   //
+                   m_Profils[Index].AddInitParams     := m_IniFile.ReadString(
+                    Lines[i], KEYNAME_ADD_INIT_PARAMS, DEFVAL_ADD_INIT_PARAMS);
                   //
                    m_Profils[Index].InactiveTimeout   := m_IniFile.ReadInteger(
                     Lines[i], KEYNAME_INACTIVE_TIMEOUT,
@@ -483,6 +495,7 @@ function TChanSettingsManager.RefreshProfilsArray():Integer;
         m_Profils[0].PhoneNumber     := DEFVAL_PHONE_NUMBER;
         m_Profils[0].ComNumber       := DEFVAL_COM_NUMBER;
         m_Profils[0].BaudRateIndex   := DEFVAL_BAUD_RATE_INDEX;
+        m_Profils[0].AddInitParams   := DEFVAL_ADD_INIT_PARAMS;
       //
         m_Profils[0].InactiveTimeout := DEFVAL_INACTIVE_TIMEOUT;
         m_Profils[0].IsWaitTone      := DEFVAL_IS_WAIT_TONE;
@@ -587,10 +600,11 @@ function TChanSettingsManager.ModifySettingsFile(
                 ChannelSettings.PhoneNumber);
               m_IniFile.WriteString(ExternalProfileName, KEYNAME_COM_NUMBER,
                 ChannelSettings.ComNumber);
-              m_IniFile.WriteString(ExternalProfileName, KEYNAME_COM_NUMBER,
-                ChannelSettings.ComNumber);
               m_IniFile.WriteInteger(ExternalProfileName,
                 KEYNAME_BAUD_RATE_INDEX, ChannelSettings.BaudRateIndex);
+
+             m_IniFile.WriteString(ExternalProfileName, KEYNAME_ADD_INIT_PARAMS,
+                ChannelSettings.AddInitParams);
               //
               m_IniFile.WriteInteger(ExternalProfileName,
                 KEYNAME_INACTIVE_TIMEOUT, ChannelSettings.InactiveTimeout);
@@ -657,6 +671,7 @@ procedure TfSettings.FillSettingsOfWindow(var ChannelSettings:TChannelSettings);
    ChannelSettings.PhoneNumber    := edPhoneNumber.Text;
    ChannelSettings.ComNumber      := cbComPort.Items[cbComPort.ItemIndex];
    ChannelSettings.BaudRateIndex  := cbBaudRate.ItemIndex;
+   ChannelSettings.AddInitParams  := edAddParams.Text;
    //
    ChannelSettings.InactiveTimeout := StrToInt(edInactiveTimeout.Text);
    ChannelSettings.IsWaitTone      := cbWaitTone.Checked;

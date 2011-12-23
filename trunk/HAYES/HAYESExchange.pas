@@ -39,7 +39,7 @@ type
     TModemManager = class
     private
       //--
-      hPort:THandle;
+
       m_ChannelSettings:TChannelSettings;
       m_ModemContext:TModemContext;
       ModemState:TModemState;
@@ -47,7 +47,9 @@ type
       ara:array [0..Integer(TModemAnswer.MAS_N) - 1] of TModAnsw;
       //--
       m_Buf:array[0..BUF_MAX_LEN] of Byte;
+      m_ReadBuf:array[0..BUF_MAX_LEN] of Byte;
       m_LastBlockSize:Integer;
+      m_ReadBufLastBlockSize:Integer;
       m_csExchange:TCriticalSection;
       //--
       function NoCarrierSM(c:Char):Boolean;
@@ -56,29 +58,29 @@ type
         IsCheckStop:Boolean):TModemAnswer; Overload;
       function m_SendATCommand (Cmd:string; TimeOut:Integer):TModemAnswer; Overload;
       function m_SendATCommand (Cmd:string):TModemAnswer; Overload;
+      function m_SendPlPlPl():Integer;
+
       //--
 
-      function PurgeRX():Boolean;
-      function WriteCOM(pBuf:PByte; Length:Integer; var Written:Integer):Boolean;
-      function ReadCOM(pBuf:PByte; BytesToRead:Integer):Integer;
       //--
       function PingModem(): Boolean;
-      function InitModem():Integer;
+      function InitModem(Settings:TChannelSettings):Integer;
       //--
+      function ProcessUserAddParams(Settings:TChannelSettings):Integer;
       function MakeATCommandForLowLayer(Command:string; buffer:PByteArray):Integer;
       function Call(Settings:TChannelSettings):Integer;
+
     public
+
         constructor Create;
         destructor Destroy;
 
-        function InitObject(Settings:TChannelSettings):Integer;
-
         function Open(Settings:TChannelSettings):Integer;
-        function WriteBlock(pBlock:Pointer; BlockSize:Word):Integer;
+        function Close():Integer;
 
+        function WriteBlock(pBlock:Pointer; BlockSize:Word):Integer;
         function ReadBlock(pBlock:Pointer; var Count:Word; MaxBlockSize:Word):Integer;
         //function IsActive():Boolean;
-
     end;
 //------------------------------------------------------------------------------
 
@@ -88,7 +90,12 @@ implementation
 //------------------------------------------------------------------------------
 constructor TModemManager.Create();
 begin
-    hPort := INVALID_HANDLE_VALUE;
+
+    ZeroMemory(@m_Buf, Sizeof(m_Buf));
+    ZeroMemory(@m_ReadBuf, Sizeof(m_ReadBuf));
+
+    m_LastBlockSize := 0;
+    m_ReadBufLastBlockSize := 0;
 
     ComPortWorker := TComPortWorker.Create;
     ModemState := TModemState.MS_UNKNOWN;
@@ -126,70 +133,7 @@ begin
    ComPortWorker.Destroy;
    m_csExchange.Destroy;
 end;
-//------------------------------------------------------------------------------
-function TModemManager.InitObject(Settings:TChannelSettings):Integer;
-begin
- Result := RET_OK;
- m_ChannelSettings := Settings;
- try
-   hPort := CreateFile(PWideChar(m_ChannelSettings.ComNumber), GENERIC_READ or
-     GENERIC_WRITE, 0, nil,	OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL or
-     FILE_FLAG_OVERLAPPED,0);
 
-   if hPort = INVALID_HANDLE_VALUE then
-    Result :=  RET_ERR;
-
- except
-   hPort := INVALID_HANDLE_VALUE;
-   Result := RET_ERR;
- end;
-
-end;
-
-//------------------------------------------------------------------------------
-function TModemManager.WriteCOM(pBuf:PByte; Length:Integer; var Written:Integer):Boolean;
-var
- w:Integer;
- pW :Cardinal;
-begin
-   Written := 0;
-   Result := False;
-   pW := Cardinal(@w);
-   repeat
-       pBuf := pBuf + Written;
-       if (WriteFile(hPort, pBuf, Length - Written, pW, Nil) = False)  then
-        begin
-          Result := False;
-          Exit;
-        end;
-
-        Written := Written + w;
-
-   until(Written < Length);
-end;
-
-//------------------------------------------------------------------------------
-function TModemManager.ReadCOM(pBuf:PByte; BytesToRead:Integer):Integer;
-var
-  r:Integer;
-  pR:Cardinal;
-begin
-    Result := RET_ERR;
-    pR := Cardinal(@r);
-    if (ReadFile(hPort, pBuf, BytesToRead, pR, Nil) = false) then
-    begin
-          Result := RET_ERR;
-    end else
-          Result := RET_OK;
-end;
-
-//------------------------------------------------------------------------------
-function TModemManager.PurgeRX():Boolean ;
-begin
-
-   Assert(hPort <> INVALID_HANDLE_VALUE, 'Дескриптор COM порта не существует');
-   Result := PurgeComm(hPort, PURGE_RXCLEAR);
-end;
 
 //------------------------------------------------------------------------------
 function TModemManager.ModemAnswerCode(buf:PByte):TModemAnswer;
@@ -209,6 +153,9 @@ begin
        end;
      end;
 
+     if (AnsiPos(cCONNECT, string(ps)) <> 0) then
+         Result := TModemAnswer.CONNECT;
+
 end;
 
 //------------------------------------------------------------------------------
@@ -217,7 +164,6 @@ var
   tmp, i:Integer;
 begin
 
-     //ZeroMemory(@ch, sizeof(ch));
 
      tmp := Length(Command);
      for i := 0 to tmp - 1 do
@@ -339,7 +285,7 @@ function TModemManager.PingModem(): Boolean;
 begin
     Result := False;
 
-    if (m_SendATCommand(AT, 100) = TModemAnswer.OK) then
+    if (m_SendATCommand(AT, 500) = TModemAnswer.OK) then
     begin
       //кладем трубку
       if (m_SendATCommand(ATH0, MODEM_ANSWER_TIMEOUT * 3) = TModemAnswer.OK) then
@@ -349,13 +295,11 @@ begin
       end;
     end;
 
-    ComPortWorker.ResetDTR();
-    //возможно, модем игнорирует DTR
     Sleep(1020);
     m_SendATCommand(PlPlPl, 3100);
 
     //кладем трубку
-    if (m_SendATCommand(AT, 100) = TModemAnswer.OK) then
+    if (m_SendATCommand(AT, 500) = TModemAnswer.OK) then
     begin
         Result := True;
         Exit;
@@ -364,7 +308,7 @@ begin
     //включаем ответ
     m_SendATCommand(ATQ0V1);
 
-    if (m_SendATCommand(AT, 100) = TModemAnswer.OK) then
+    if (m_SendATCommand(AT, 500) = TModemAnswer.OK) then
     begin
         Result := True;
         Exit;
@@ -373,7 +317,7 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-function TModemManager.InitModem():Integer;
+function TModemManager.InitModem(Settings:TChannelSettings):Integer;
 var
  	  ATplIFC02Accepted, ATslQ2Accepted: Boolean;
 begin
@@ -391,12 +335,10 @@ begin
 
     //включаем эхо (оно тут не нужно, но пусконаладчики пугаются)
     m_SendATCommand(ATE1);
-    //сбрасываем модем в заводские настройки
-   //	m_SendATCommand(ATampF);
 
     //включаем динамик
     m_SendATCommand(ATM1);
-//
+
    //ждать/не ждать гудка, определять "занято"
    if (m_ChannelSettings.IsWaitTone = True) then
     begin
@@ -409,15 +351,13 @@ begin
       begin
         m_SendATCommand(ATX3);
         //пауза перед слепым дозвоном 2 cек (recommended by V.250)
-        //TODO: должно настраиваться
         m_SendATCommand('ATS6=2');
       end;
 
     //ожидание ответа
-    m_SendATCommand(string('ATS7=' + IntToStr(m_ChannelSettings.TimeOuts)));
+    m_SendATCommand(string('ATS7=' + IntToStr(Round(Settings.TimeOuts/1000))));
 
-    //класть трубку по DTR
-    m_SendATCommand(ATampD2);
+    //отключение реакции на DTR
     m_SendATCommand(ATampD0);
 
     //RLSD стоит только при несущей
@@ -436,16 +376,14 @@ begin
     ATplIFC02Accepted := False;
     ATslQ2Accepted    := False;
 
-    if (m_SendATCommand(ATplIFC02) = TModemAnswer.OK) then //V.250
-      ATplIFC02Accepted := True
-    else if (m_SendATCommand(ATslQ2) = TModemAnswer.OK) then//Siemens MC35i
-        ATslQ2Accepted := True;
+    m_SendATCommand(ATplIFC00); //V.250
+    m_SendATCommand(ATslQ0); //Siemens MC35i
 
     if (ATplIFC02Accepted = True) or (ATslQ2Accepted = True) then
     begin    //пробуем включить аппаратное управление потоком
        //ComPortWorker.SetHWFlowControl(True);
 
-       if (m_SendATCommand(AT, 100) <> TModemAnswer.OK) then
+       if (m_SendATCommand(AT, 500) <> TModemAnswer.OK) then
        begin
           ComPortWorker.PurgeRX();
           ComPortWorker.SetHWFlowControl(False);
@@ -482,7 +420,7 @@ begin
         ATDCommand := ATDCommand + 'W';
     Iter := 0;
 
-    ATDCommand := ATDCommand + Settings.PhoneNumber + ';';
+    ATDCommand := ATDCommand + Settings.PhoneNumber;
     repeat
        m_SendATCommand(ATcapSPBD_BL);
        mr := m_SendATCommand(ATDCommand, Settings.TimeOuts + 15);
@@ -490,6 +428,7 @@ begin
        case mr of
            TModemAnswer.CONNECT:
            begin
+              //соединение с удаленным модемом удачно установленно
               ModemState := TModemState.MS_DATA_MODE;
               Sleep(100);
               Result:= RET_OK;
@@ -498,15 +437,16 @@ begin
 
            TModemAnswer.OK:
            begin
+              //В этом случае "OK" не подходит
               Result:= RET_ERR;
               Exit;
            end;
 
            TModemAnswer.BUSY:
            begin
+           //занято, ждем секунду
               Sleep(1000);
            end;
-
        end;
 
        Iter:= Iter + 1;
@@ -514,26 +454,200 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TModemManager.ProcessUserAddParams(Settings:TChannelSettings):Integer;
+var
+  FirstIdx, Count, i, len:Integer;
+  Comand:string;
+begin
+
+   len := Length(Settings.AddInitParams);
+   if len = 0 then
+   begin
+     Result := RET_OK;
+     Exit;
+   end;
+
+   FirstIdx := 1;
+   Count := 0;
+
+   for i := 1 to len do
+   begin
+      if (Char(Settings.AddInitParams[i]) = ',') then
+      begin
+         m_SendATCommand(Copy(Settings.AddInitParams, FirstIdx, Count));
+         FirstIdx := FirstIdx + Count + 1;
+         Count := 0;
+      end else
+         Count := Count + 1;
+   end;
+
+   if Count > 0 then
+       m_SendATCommand(Copy(Settings.AddInitParams, FirstIdx, Count));
+
+end;
+
+//------------------------------------------------------------------------------
+function TModemManager.m_SendPlPlPl():Integer;
+var
+    Written:Integer;
+    CommandLen:Integer;
+    buf: array [0..MAX_RESP_LENGTH - 1] of Byte;
+    buffer:Array [0..2] of Byte;
+    rd, r, Count: Integer;
+    Tics:Cardinal;
+    State: TState;
+    MA:TModemAnswer;
+begin
+
+    Result := RET_ERR;
+    rd := 0;
+
+    for r := 0 to 2 do
+        buffer[r] := Byte(Char('+'));
+
+    //пауза между АТ-командами
+    //нужна для D-Link'а, иначе он перестает отвечать
+
+    ComPortWorker.PurgeRX();
+
+    if (ComPortWorker.WriteCOM(@buffer, 3) = RET_ERR) then
+    begin
+        Result := RET_ERR;   //ошибка
+        Exit;
+    end;
+        //цикл сбора пакета ответа от модема
+    State := TState.STS_READING;
+
+    Tics := GetTickCount(); //Кол- во "тиков". Нужно для отсчета времени
+
+    repeat
+
+    if (ComPortWorker.ReadCOM(@buf[rd], 1, Count) = RET_ERR) then
+    begin
+       Sleep(0);//Отказаться от этого кванта ЦП
+       continue;
+    end;
+
+    Sleep(10);
+    if Count > 0 then
+    begin
+        case State of
+        TState.STS_READING:
+            begin
+                if buf[rd] = 13 then
+                    State := TState.STS_0D_RECVED
+                else if buf[rd] <> 10 then
+                      rd := rd + 1;
+                end;
+
+             TState.STS_0D_RECVED:
+             begin
+                 if buf[rd] = 10 then
+                 begin
+                     buf[rd] := 0;
+                     MA := ModemAnswerCode(@buf[0]);
+                     if MA = TModemAnswer.OK then
+                     begin
+                         Result := RET_OK;
+                         Exit;//Есть ответ
+                     end else
+                         begin
+                             ZeroMemory(@buf[0], rd);
+                             rd := 0;
+                             State := TState.STS_READING;
+                         end;
+                  end else
+                      begin
+                          ZeroMemory(@buf[0], rd);
+                          rd := 0;
+                          State := TState.STS_READING;
+                       end;
+                        end;
+                    end;
+
+
+             if rd >= MAX_RESP_LENGTH then
+                Exit;//
+         end;
+         until ((GetTickCount() - Tics) > 4000);
+end;
+
+//------------------------------------------------------------------------------
 function TModemManager.Open(Settings:TChannelSettings):Integer;
+begin
+
+  try
+
+    m_csExchange.Enter;
+    Result := RET_ERR;
+
+    if ModemState = TModemState.MS_DATA_MODE then
+    begin
+       Close();
+       if ModemState = TModemState.MS_UNKNOWN then
+          begin
+            Result := RET_ERR;
+            Exit;
+
+          end;
+
+    end;
+
+    if ComPortWorker.OpenCOM(Settings) = RET_OK then
+    begin
+       if InitModem(Settings) = RET_ERR then
+       begin
+            Result := RET_ERR;
+            Exit;
+       end;
+
+       ProcessUserAddParams(Settings);
+       if (Call(Settings) = RET_OK) then
+          Result := RET_OK;
+
+// отладка без модема
+      //Result := RET_OK;
+      //ModemState := TModemState.MS_DATA_MODE;
+
+    end;
+
+  finally
+    m_csExchange.Leave;
+  end;
+end;
+
+//------------------------------------------------------------------------------
+function TModemManager.Close():Integer;
 begin
 
     m_csExchange.Enter;
 
-    Result := RET_ERR;
-    if ComPortWorker.OpenCOM(Settings) = RET_OK then
-    begin
-       InitModem();
-       if (Call(Settings) = RET_OK) then
-          Result := RET_OK;
-    end;
+    try
 
-    m_csExchange.Leave;
+      Result := RET_OK;
+      Sleep(1000);
+      m_SendPlPlPl();
+      Sleep(2000);
+
+      if m_SendATCommand(ATH0, 1000) <> TModemAnswer.OK then
+      begin
+        Result := RET_ERR;
+        ModemState := TModemState.MS_UNKNOWN;
+      end else
+        ModemState := TModemState.MS_CMD_MODE;
+          ModemState := TModemState.MS_CMD_MODE;
+
+    finally
+      ComPortWorker.CloseCOM();
+      m_csExchange.Leave;
+    end;
 end;
 
 //------------------------------------------------------------------------------
 function TModemManager.WriteBlock(pBlock:Pointer; BlockSize:Word):Integer;
 begin
 
+    //модем должен находится в режиме передачи данных
     if (ModemState <> TModemState.MS_DATA_MODE) then
     begin
         Result := RET_ERR;
@@ -555,7 +669,6 @@ begin
             Result := RET_ERR;   //ошибка
             Exit;
         end;
-
         Result := RET_OK;
 
     finally
@@ -595,13 +708,14 @@ begin
     try
         m_csExchange.Enter;
 
-        ZeroMemory(@m_Buf[0], m_LastBlockSize);
-        m_LastBlockSize:= 0;
+        ZeroMemory(@m_ReadBuf[0], m_ReadBufLastBlockSize);
+        m_ReadBufLastBlockSize:= 0;
 
         for i := 0 to MaxBlockSize - 1 do
         begin
 
            ComPortWorker.ReadCOM(@m_Buf[rd], 1, rdCount);
+           rd := rd + rdCount;
 
            if rdCount = 0 then
            begin
@@ -612,25 +726,39 @@ begin
              Result := RET_OK;
              Count := rd;
              Exit;
+           end else
+           begin
+              if (NoCarrierSM(Char(m_Buf[rd])) = True) then
+			          begin
+
+                  ModemState := TModemState.MS_CMD_MODE;
+                  ComPortWorker.PurgeRX();
+                  Result := RET_ERR;
+			          end;
+
+                if rd = Count  then
+                begin
+
+                  CopyMemory(pBlock, @m_Buf[0], rd);
+
+                  Result := RET_OK;
+                  Count := rd;
+                  Exit;
+                end;
            end;
 
-           if (NoCarrierSM(Char(m_Buf[rd])) = True) then
-			     begin
 
-              ModemState := TModemState.MS_CMD_MODE;
-              ComPortWorker.PurgeRX();
-              Result := RET_ERR
-			    end;
 
-          rd := rd + rdCount;
+
 
         end;
-    finally
-        m_csExchange.Leave;
-    end;
 
     Result := RET_OK;
     Count := rd;
+    finally
+        m_csExchange.Leave;
+    end;
 end;
 
+//------------------------------------------------------------------------------
 end.

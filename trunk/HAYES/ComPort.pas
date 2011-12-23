@@ -21,6 +21,10 @@ type
 
 
       public
+
+          constructor Create;
+          destructor Destroy;
+
           function OpenCOM(Settings:TChannelSettings):Integer;
           function CloseCOM():Integer;
           function GetStateCOM():Boolean;
@@ -36,6 +40,19 @@ var
   ComPortWorker:TComPortWorker;
 
 implementation
+
+constructor TComPortWorker.Create;
+begin
+
+    hPort := INVALID_HANDLE_VALUE;
+    ZeroMemory(@buf, Sizeof(buf));
+
+end;
+
+destructor TComPortWorker.Destroy;
+begin
+
+end;
 
 //------------------------------------------------------------------------------
 function TComPortWorker.OpenCOM(Settings:TChannelSettings):Integer;
@@ -57,8 +74,11 @@ begin
   end else
   	s := '\\\\.\\COM' +  IntToStr(tmp);
 
+    if (hPort <> INVALID_HANDLE_VALUE) then
+        CloseCOM();
+
   hPort := CreateFile(PWideChar(s), GENERIC_READ or GENERIC_WRITE, 0, Nil, OPEN_EXISTING,
-		FILE_FLAG_OVERLAPPED, 0);
+		0, 0);
 
   if (hPort = INVALID_HANDLE_VALUE) then
   begin
@@ -103,11 +123,11 @@ begin
   end;
 
 
-	if (SetCommMask(hPort, EV_CTS or EV_DSR or EV_RLSD) = False) then
-	begin
-    Result := RET_ERR;
-    Exit;
-  end;
+	//if (SetCommMask(hPort, EV_CTS or EV_DSR or EV_RLSD) = False) then
+	//begin
+   // Result := RET_ERR;
+   // Exit;
+  //end;
 
 	if (SetupComm(hPort, 1024, 1024) = False) then
 	begin
@@ -146,31 +166,18 @@ end;
 function TComPortWorker.WriteCOM(pBlock:PByteArray; BlockSize:Word):Integer;
 var
 	Written, w: DWord;
+
+  i : integer;
 begin
 
 	Assert(hPort <> INVALID_HANDLE_VALUE, 'Bad handle of com port in function WriteCOM');
 	Written := 0;
 
- //	if (g_Settings.m_FlowControl == FLOW_HARDWARE)
-	{
-		UINT32 f;
-		GetCOMStatus(&f);
-		if (!(f & MS_CTS_ON))
-		{
-			Sleep(MODEM_ANSWER_TIMEOUT);
-			GetCOMStatus(&f);
-			if (!(f & MS_CTS_ON))
-			{
-				ThIdDPRINT(TEXT(__FUNCTION__) L" throw R_MODEM_NOT_RESP\r\n");
-				throw MAKE_ERROR_CODE(R_MODEM_NOT_RESP);
-			}
-	 //	}
-	//}
 
 	repeat
 		//ThIdDPRINT(TEXT(__FUNCTION__) L" WriteFile\r\n");
 
-		if (WriteFile(hPort, pBlock[Written], BlockSize - Written, &w, Nil) = False) then
+		if (WriteFile(hPort, pBlock[Written] , BlockSize - Written, &w, Nil) = False) then
 		begin
 			//ThIdDPRINT(TEXT(__FUNCTION__) L" WriteFile fail\r\n");
 			Result := RET_ERR;
