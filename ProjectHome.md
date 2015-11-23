@@ -1,0 +1,1 @@
+Ethernet and HAYES-modem communication channels
